@@ -7,4 +7,4 @@ Requires timechange and synctime.
 
 Run `npm install steam-web` inside the deathmatch package to install the required node module.
 
-You also need to replace "YOUR API KEY" on line 246 with your steam API key found at https://steamcommunity.com/dev/apikey
+You also need to replace "YOUR API KEY" on line 246 of `deathmatch/main.js` with your steam API key found at https://steamcommunity.com/dev/apikey
