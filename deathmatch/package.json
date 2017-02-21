@@ -1,0 +1,8 @@
+{
+    "author": "Lord Farquaad",
+    "jcmp_dependencies": [
+        "chat"
+    ],
+    "name": "deathmatch",
+    "version": "1.0.0"
+}

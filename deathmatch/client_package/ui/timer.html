@@ -1,0 +1,54 @@
+<html>
+    <style>
+    div
+    {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 35px;
+        text-align: center;
+        color: white;
+        text-shadow: 4px 4px 4px black, 0px 0px 10px black;
+        padding: 2px 5px;
+        position: fixed;
+        top: 0%;
+        right: 15px;
+        margin: 15px 15px 15px 15px;
+    }
+
+    </style>
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+    <script>
+
+    let ingame_time = 0;
+
+    jcmp.AddEvent('deathmatch/decreaseingametime', () => 
+    {
+        ingame_time -= 1;
+        ingame_time = (ingame_time < 0) ? 0 : ingame_time;
+        UpdateTime();
+    });
+
+    jcmp.AddEvent('deathmatch/setingametime', (num) => 
+    {
+        ingame_time = num;
+        UpdateTime();
+    });
+
+    function UpdateTime()
+    {
+        let minutes = Math.floor(ingame_time / 60);
+        let seconds = ingame_time % 60;
+        if (seconds < 10)
+        {
+            seconds = "0" + seconds;
+        }
+        $("div").text(`${minutes}:${seconds}`);
+    }
+    
+    jcmp.AddEvent('deathmatch/changebordercolor', (color) => {
+        $("div").css("color", color);
+    })
+
+    
+    </script>
+    <body><div>5:46</div></body>
+</html>

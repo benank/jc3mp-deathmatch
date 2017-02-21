@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            body 
+            {
+                width: 950px;
+                height: 950px;
+                border: 5px solid white;
+                border-radius: 1000px;
+                position: fixed;
+                margin: 0px 0px 0px 0px;
+            }
+        </style>
+    </head>
+    <body>
+    </body>
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+    <script>
+    jcmp.AddEvent('deathmatch/changebordercolor', (color) => {
+        $("body").css("border-color", color);
+    })
+    </script>
+</html>
