@@ -13,3 +13,5 @@ set `integrated_mode` to true.
 - Supported weathers for arenas: base, rain, overcast, thunderstorm, fog, snow, and random.
 - Players will retain their weapons through matches. This will be fixed when JC3MP 0.9.9 is released.
 - Requires [chat](https://gitlab.nanos.io/jc3mp-packages/chat).
+- Requires [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
+- Highly recommended, but optional: [TimeChange](https://github.com/noobasaurus/jc3mp-timechange).
