@@ -15,3 +15,9 @@ set `integrated_mode` to true.
 - Requires [chat](https://gitlab.nanos.io/jc3mp-packages/chat).
 - Requires [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
 - Highly recommended, but optional: [TimeChange](https://github.com/noobasaurus/jc3mp-timechange).
+
+### Todo
+
+- Make SyncTime and TimeChange not required.
+- Organize clientside code.
+- Add another arena or two.
