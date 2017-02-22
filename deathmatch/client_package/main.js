@@ -1,5 +1,6 @@
 const ui = new WebUIWindow("maintitle", "package://deathmatch/ui/index.html", new Vector2(jcmp.viewportSize.x, jcmp.viewportSize.y));
 ui.autoResize = true;
+ui.hidden = true;
 
 const leavingmsg = new WebUIWindow("leavingmsg", "package://deathmatch/ui/leavingfield.html", new Vector2(jcmp.viewportSize.x, jcmp.viewportSize.y));
 leavingmsg.autoResize = true;
@@ -39,6 +40,7 @@ weapon_icons.shotgun = new WebUIWindow("weapon_icon4", "package://deathmatch/ui/
 weapon_icons.assault = new WebUIWindow("weapon_icon5", "package://deathmatch/ui/weapons/assault.html", new Vector2(500, 500));
 weapon_icons.sniper = new WebUIWindow("weapon_icon6", "package://deathmatch/ui/weapons/sniper.html", new Vector2(500, 500));
 
+let integrated_ui = true;
 let num_players = 0;
 let num_ingame = 0;
 let defaults;
@@ -59,6 +61,17 @@ let shrink_size = 0;
 let steam_urls = [];
 let camera_position = new Vector3f(0,0,0);
 
+const weathers = 
+[
+    'base',
+    'rain',
+    'overcast',
+    'thunderstorm',
+    'fog',
+    'snow'
+];
+
+
 let ingame = false;
 
 //jcmp.localPlayer.wingsuit.boostDuration = 10000000;
@@ -72,6 +85,7 @@ jcmp.ui.AddEvent('SecondTick', () => {
         {
             jcmp.ui.CallEvent('deathmatch/startcountdownsound');
             countdown_sound = true;
+            jcmp.localPlayer.frozen = false;
         }
         else
         {
@@ -140,9 +154,12 @@ jcmp.ui.AddEvent('SecondTick', () => {
 })
 
 jcmp.events.AddRemoteCallable('EndGame', () => {
-    ResetCamera();
     ingame = false;
-    ui.hidden = false;
+    if (!integrated_ui)
+    {
+        ui.hidden = false;
+        ResetCamera();
+    }
     ingame_ui.hidden = true;
     border.hidden = true;
     leavingmsg.hidden = true;
@@ -153,11 +170,19 @@ jcmp.events.AddRemoteCallable('EndGame', () => {
     jcmp.ui.CallEvent('ResetCountdownCSS');
     jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
     jcmp.events.Call('EndDeathmatchRound');
+    jcmp.world.weather = 0;
+})
+
+jcmp.events.AddRemoteCallable('NonIntegratedUI', () => {
+    integrated_ui = false;
+    ui.hidden = false;
+    ResetCamera();
 })
 
 jcmp.events.AddRemoteCallable('FadeInCountdown', () => {
     countdown.hidden = false;
     countdownTime = 0;
+    jcmp.localPlayer.frozen = true;
     jcmp.ui.CallEvent('deathmatch/fadeincountdown');
 })
 
@@ -200,7 +225,10 @@ jcmp.events.AddRemoteCallable('SyncPlayersIngame', (num) => {
 jcmp.events.AddRemoteCallable('ChangeArena', (data) => {
     data = JSON.parse(data);
     camera_position = new Vector3f(data.x, data.y + 600, data.z);
-    ResetCamera();
+    if (!integrated_ui)
+    {
+        ResetCamera();
+    }
 })
 
 function ResetCamera()
@@ -212,13 +240,14 @@ function ResetCamera()
     jcmp.localPlayer.controlsEnabled = true;
 }
 
-ResetCamera();
-
-
 jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
     defaults = JSON.parse(data);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
     diameter = new Vector2f(defaults.diameter, defaults.diameter);
+    if (weathers.indexOf(defaults.weather) > -1)
+    {
+        jcmp.world.weather = weathers.indexOf(defaults.weather);
+    }
     m = CreateNewBorderMatrix();
     //jcmp.world.SetTime(defaults.time.hour, defaults.time.minutes);
 })

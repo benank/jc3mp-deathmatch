@@ -9,6 +9,7 @@
         "showdown_time" : 120,
         "time" : {"hour": 12, "minute": 30},
         "time_step" : 0,
+        "weather" : "random",
         "weapons" : 
         {
             "pistol" : 

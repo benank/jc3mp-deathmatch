@@ -55,7 +55,9 @@
     })
 
     jcmp.AddEvent('deathmatch/playerdied', (id) => {
+        // Make the X red and make their avatar grayscale
         $("#networkId_" + id).css("background-color", "red");
+        $("#avatar_" + id).css("filter", "grayscale(100%)");
     })
 
     jcmp.AddEvent('deathmatch/updatesteamavatars', (steam_urls) => {
@@ -75,6 +77,7 @@
         data.forEach(function(profile) 
         {
             let img = document.createElement("img");
+            img.id = "avatar_" + profile.id;
             img.src = profile.url;
             avatar_div.append(img);
         });
