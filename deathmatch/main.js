@@ -10,11 +10,6 @@ global.dm =
 
 }
 
-// people crash right when GAME START and then the other players who are loaded get infinite black screen
-// other people's names appear on peoples heads
-// fades to black but timer does not start if a game starts and a player leaves
-// sometimes fades to black when a player leaves but GAME START has not happened
-
 require('./scripts/gameManager');
 require('./scripts/steam');
 require('./scripts/loader');
