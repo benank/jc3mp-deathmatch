@@ -15,44 +15,44 @@
         {
             "pistol" : 
             [
-                {"hash": 2144721124, "name": "CS44 Peacebringer", "min_ammo": 20, "max_ammo": 45, "respawn_time": 0.5},
-                {"hash": 3944301769, "name": "CS Spectre Mark V", "min_ammo": 20, "max_ammo": 45, "respawn_time": 0.5},
-                {"hash": 3305603558, "name": "The Little General","min_ammo": 20, "max_ammo": 40, "respawn_time": 0.5},
-                {"hash": 4040374394, "name": "U-55S Pozhar",      "min_ammo": 20, "max_ammo": 45, "respawn_time": 0.5}
+                {"hash": 2144721124, "name": "CS44 Peacebringer", "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 3944301769, "name": "CS Spectre Mark V", "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 3305603558, "name": "The Little General","min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 4040374394, "name": "U-55S Pozhar",      "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5}
             ],
             "submachine" : 
             [
-                {"hash": 1709033370, "name": "Prizrak U4",      "min_ammo": 55, "max_ammo": 105, "respawn_time": 1},
-                {"hash": 89410586, "name": "CS Wraith 225R",    "min_ammo": 55, "max_ammo": 105, "respawn_time": 1},
-                {"hash": 2470879546, "name": "CS9 PDW-K",       "min_ammo": 55, "max_ammo": 105, "respawn_time": 1}
+                {"hash": 1709033370, "name": "Prizrak U4",      "min_ammo": 120, "max_ammo": 240, "respawn_time": 1},
+                {"hash": 89410586, "name": "CS Wraith 225R",    "min_ammo": 120, "max_ammo": 240, "respawn_time": 1},
+                {"hash": 2470879546, "name": "CS9 PDW-K",       "min_ammo": 120, "max_ammo": 240, "respawn_time": 1}
             ],
             "shotgun" : 
             [
-                {"hash": 1549148855, "name": "Automat U12",     "min_ammo": 10, "max_ammo": 25, "respawn_time": 1},
-                {"hash": 2219364824, "name": "U-24 Zabijak",    "min_ammo": 10, "max_ammo": 25, "respawn_time": 1}
+                {"hash": 1549148855, "name": "Automat U12",     "min_ammo": 30, "max_ammo": 80, "respawn_time": 1},
+                {"hash": 2219364824, "name": "U-24 Zabijak",    "min_ammo": 30, "max_ammo": 80, "respawn_time": 1}
             ],
             "sniper" : 
             [
-                {"hash": 37039781, "name": "CS110 Archangel",   "min_ammo": 7, "max_ammo": 15, "respawn_time": 1.5},
-                {"hash": 3923877588, "name": "USV 45 Sokol",    "min_ammo": 7, "max_ammo": 15, "respawn_time": 1.5}
+                {"hash": 37039781, "name": "CS110 Archangel",   "min_ammo": 15, "max_ammo": 30, "respawn_time": 1.5},
+                {"hash": 3923877588, "name": "USV 45 Sokol",    "min_ammo": 15, "max_ammo": 30, "respawn_time": 1.5}
             ],
             "assault" : 
             [
-                {"hash": 1394636892, "name": "CS27 Misfortune", "min_ammo": 30, "max_ammo": 70, "respawn_time": 1.5},
-                {"hash": 2621157955, "name": "CS Predator",     "min_ammo": 30, "max_ammo": 70, "respawn_time": 1.5},
-                {"hash": 2307691279, "name": "U-39 Plechovka",  "min_ammo": 30, "max_ammo": 70, "respawn_time": 1.5},
-                {"hash": 3681410946, "name": "UPM61",           "min_ammo": 30, "max_ammo": 70, "respawn_time": 1.5}
+                {"hash": 1394636892, "name": "CS27 Misfortune", "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 2621157955, "name": "CS Predator",     "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 2307691279, "name": "U-39 Plechovka",  "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 3681410946, "name": "UPM61",           "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5}
             ],
             "rocket" : 
             [
-                {"hash": 3070823687, "name": "Capstone Hydra",  "min_ammo": 2, "max_ammo": 7, "respawn_time": 2},
-                {"hash": 2042423840, "name": "CS Negotiator",   "min_ammo": 3, "max_ammo": 10, "respawn_time": 2},
-                {"hash": 68160093,   "name": "Fire Leech",      "min_ammo": 2, "max_ammo": 8, "respawn_time": 2},
-                {"hash": 1440484885, "name": "Urga Stupka-210", "min_ammo": 7, "max_ammo": 15, "respawn_time": 2},
-                {"hash": 3913913650, "name": "UVK-13",          "min_ammo": 3, "max_ammo": 10, "respawn_time": 2},
-                {"hash": 1355855625, "name": "Dionysus PLDS-H", "min_ammo": 2, "max_ammo": 7, "respawn_time": 2},
-                {"hash": 1064776106, "name": "M488",            "min_ammo": 2, "max_ammo": 5, "respawn_time": 3},
-                {"hash": 3191136252, "name": "GuitaRPG",        "min_ammo": 10, "max_ammo": 15, "respawn_time": 2}
+                {"hash": 3070823687, "name": "Capstone Hydra",  "min_ammo": 3, "max_ammo": 10, "respawn_time": 2},
+                {"hash": 2042423840, "name": "CS Negotiator",   "min_ammo": 5, "max_ammo": 15, "respawn_time": 2},
+                {"hash": 68160093,   "name": "Fire Leech",      "min_ammo": 4, "max_ammo": 14, "respawn_time": 2},
+                {"hash": 1440484885, "name": "Urga Stupka-210", "min_ammo": 10, "max_ammo": 20, "respawn_time": 2},
+                {"hash": 3913913650, "name": "UVK-13",          "min_ammo": 4, "max_ammo": 13, "respawn_time": 2},
+                {"hash": 1355855625, "name": "Dionysus PLDS-H", "min_ammo": 3, "max_ammo": 9, "respawn_time": 2},
+                {"hash": 1064776106, "name": "M488",            "min_ammo": 3, "max_ammo": 6, "respawn_time": 3},
+                {"hash": 3191136252, "name": "GuitaRPG",        "min_ammo": 10, "max_ammo": 17, "respawn_time": 2}
             ],
             "grenade" : 
             [
