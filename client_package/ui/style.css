@@ -1,0 +1,154 @@
+h1 {
+    position: fixed;
+    width: 1000px;
+    height: 500px;
+    color: red;
+    text-align: center;
+    font-size: 145px;
+    left: 50%;
+    top: 25%;
+    text-shadow: 3px 3px 10px black, 0px 0px 25px darkred, 0px 0px 50px darkred;
+    font-family: "True-Lies", sans-serif;
+    letter-spacing: 5px;
+    user-select: none;
+    animation-name: title;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes title {
+    0% {transform: translate(-50%, -50%);}
+    50% {transform: translate(-50%, -50%);}
+    100% {transform: translate(-50%, -50%);}
+}
+
+@font-face {
+    font-family: 'True-Lies';
+    font-style: normal;
+    src: local('True-Lies'), url('fonts/True-Lies.ttf');
+    unicode-range: U+0000-00FF;
+}
+
+body
+{
+    background-color: rgba(0, 0, 0, 0.25);
+    margin: 0px;
+}
+
+div.playersinfo
+{
+    position:absolute;
+    left: 50%;
+    top: 130%;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    user-select: none;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+.red_time
+{
+    color: red;
+}
+
+div.playersdiv
+{
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    width: 50%;
+    height: 100px;
+    transform: translate(-50%, -150%);
+    text-shadow: 0px 0px 5px red;
+}
+
+div.numplayers
+{
+    position:relative;
+    right: 0px;
+    top: 0px;
+    width: 40px;
+    height: 40px;
+    margin-left: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 40px;
+    text-align: center;
+    background-color: darkorange;
+    border: 3px solid black;
+    border-radius: 100px;
+    background-image: radial-gradient(darkred, black);
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    color: black;
+    text-shadow: 0px 0px 10px red;
+    user-select: none;
+    box-shadow: 0px 0px 10px red;
+}
+
+div.numplayerstext
+{
+    position: relative;
+    left: 50%;
+    top: 50%;
+    height: auto;
+    width: 400px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    user-select: none;
+    font-weight: bold;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    float: left;
+    transform: translate(-100%, -50%);
+    text-shadow: 0px 0px 10px red, 0px 0px 30px darkred, 0px 0px 70px darkred;
+}
+
+div.info
+{
+    position: fixed;
+    color: white;
+    text-align: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    width: 36%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    user-select: none;
+    font-weight: 400;
+    border-spacing: 10px 10px;
+    border: 3px solid black;
+    border-radius: 10px;
+    box-shadow: 0px 0px 25px darkred, 0px 0px 50px black, 0px 0px 100px black;
+    padding: 12px 5px 12px 5px;
+    background-image: linear-gradient(#7A2323, black);
+    text-shadow: 2px 2px 3px black;
+}
+
+.blue
+{
+    color: #1500FF;
+}
+
+.red
+{
+    color: red;
+    font-size: 120%;
+    text-align: center;
+    font-weight: bold;
+}
+
+p1 {
+    color: black;
+    text-align: center;
+    font-size: 25px;
+    vertical-align: bottom;
+}

@@ -20,5 +20,4 @@ set `integrated_mode` to true.
 
 - Make SyncTime and TimeChange not required.
 - Organize clientside code.
-- Add another arena or two.
-- Probably put healthui into the deathmatch package.
+- Maybe add a small UI to display players in lobby for integrated mode.

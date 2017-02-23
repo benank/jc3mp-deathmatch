@@ -1,0 +1,69 @@
+<html>
+    <style>
+    img
+    {
+        position: fixed;
+        bottom: 2%;
+        left: 50%;
+        margin: 3px;
+        width: 64px;
+        height: 64px;
+        border: 3px solid black;
+        border-radius: 64px;
+        transform: translateX(-50%);
+        user-select: none;
+    }
+
+    div
+    {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 20px;
+        font-weight: 500;
+        color: white;
+        text-shadow: 2px 2px black, 0px 0px 4px black;
+        position: fixed;
+        bottom: 2%;
+        left: 50%;
+        margin: 3px;
+        width: 64px;
+        height: 64px;
+        border: 3px solid transparent;
+        border-radius: 64px;
+        transform: translate(-50%, 25%);
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+    }
+
+    </style>
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+    <script>
+
+    let myUrl;
+
+    jcmp.AddEvent('deathmatch/updatehealthui', (num) => {
+        num = Math.round(num * 100);
+        num = (num > 0) ? num : 0;
+        let hp_gray = (100 - num) + "%";
+        let hp = num + "%";
+        $("img").css("filter", `grayscale(${hp_gray})`);
+        $("div").text(hp);
+    })
+    
+    jcmp.AddEvent('deathmatch/updatesteamavatars', (steam_urls) => {
+        let steamdata = JSON.parse(steam_urls);
+        steamdata.forEach(function(profile) 
+        {
+            if (profile.localplayer)
+            {
+                myUrl = profile.url;
+            }
+        });
+        $("img").attr("src", myUrl);
+    })
+
+
+    </script>
+    <img id="avatar" src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/69/69f109df54e4b1e75feeee569f3a754305c02a6b_medium.jpg"></img>
+    <div>100%</div>
+</html>
