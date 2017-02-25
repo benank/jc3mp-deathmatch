@@ -14,11 +14,11 @@ set `integrated_mode` to true.
 - Players will retain their weapons through matches. This will be fixed when JC3MP 0.9.9 is released.
 - Requires [chat](https://gitlab.nanos.io/jc3mp-packages/chat).
 - Requires [keypress](https://github.com/noobasaurus/jc3mp-keypress).
-- Requires [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
-- Highly recommended, but optional: [TimeChange](https://github.com/noobasaurus/jc3mp-timechange).
+- Requires [TimeChange](https://github.com/noobasaurus/jc3mp-timechange).
+- Highly recommended, but optional: [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
 
 ### Todo
 
-- Make SyncTime and TimeChange not required.
+- Make TimeChange not required.
 - Organize clientside code.
 - Maybe add a small UI to display players in lobby for integrated mode.
