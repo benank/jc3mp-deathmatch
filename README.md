@@ -15,10 +15,10 @@ set `integrated_mode` to true.
 - Requires [chat](https://gitlab.nanos.io/jc3mp-packages/chat).
 - Requires [keypress](https://github.com/noobasaurus/jc3mp-keypress).
 - Requires [TimeChange](https://github.com/noobasaurus/jc3mp-timechange).
-- Highly recommended, but optional: [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
+- Highly recommended, but technically optional: [SyncTime](https://github.com/noobasaurus/jc3mp-synctime).
 
 ### Todo
 
-- Make TimeChange not required.
+- Make SyncTime not required.
 - Organize clientside code.
 - Maybe add a small UI to display players in lobby for integrated mode.
