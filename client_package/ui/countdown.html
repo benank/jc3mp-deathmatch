@@ -1,75 +1,100 @@
 <html>
     <style>
-    body
+     html, body 
+     {
+        margin:0;
+        padding:0;
+        height:100%; 
+    } 
+    #wrapper
     {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+    }
+    #countdown
+    {
+        width: 101%;
+        height: 100%;
+        user-select: none;
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
         font-size: 300px;
+        top: 50%;
+        left: 50%;
         font-weight: bold;
         text-align: center;
-        color: red;
-        text-shadow: 4px 4px 5px black, 0px 0px 10px black, 0px 0px 50px black;
+        line-height: 225%;
+        color: transparent;
         position: fixed;
-        top: 40%;
-        left: 50%;
         transform: translate(-50%, -50%);
         background-color: transparent;
-        opacity: 0;
-        filter: blur(0px);
     }
-
     .animation
     {
         animation-name: title;
         animation-duration: 5s;
         animation-iteration-count: 1;
     }
-
     @keyframes title {
-        0% {background-color: black; opacity: 1;}
+        0% {background-color: black; opacity: 1; color: red;}
         10% {background-color: transparent;}
-        100% {filter: blur(100px); opacity: 0;}
+        100% {filter: blur(100px); opacity: 0; color:transparent;}
     }
-
     .animation2
     {
         animation-name: title2;
         animation-duration: 1s;
         animation-iteration-count: 1;
     }
-
     @keyframes title2 {
-        0% {background-color: transparent; opacity: 0;}
-        100% {background-color: black; opacity: 0;}
+        0% {background-color: transparent;}
+        100% {background-color: black;}
+    }
+
+
+    #loading
+    {
+        width: 100%;
+        user-select: none;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-size: 40px;
+        text-align: center;
+        color: white;
+        text-shadow: 4px 4px 5px black, 0px 0px 10px black, 0px 0px 50px black;
+        position: fixed;
+        bottom: 5%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
     }
 
     </style>
     <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
     <script>
-
     jcmp.AddEvent('deathmatch/updategamestartcountdown', (num) => 
     {
-        $("body").text(`${num}`);
+        $("#countdown").text(`${num}`);
         if (num == "GO!")
         {
-            $("body").css("background-color", "transparent");
-            $("body").addClass("animation");
+            $("#countdown").css("background-color", "transparent");
+            $("#countdown").addClass("animation");
             setTimeout(function() 
             {
-                $("body").removeClass("animation");
+                $("#countdown").removeClass("animation");
                 jcmp.CallEvent('deathmatch/hidecountdown');
             }, 5000);
         }
     });
-
     jcmp.AddEvent('CleanupIngameUI', () => {
         countdownsound.pause();
+        $("#loading").css("opacity", "0");
     })
-
     let countdownsound = null;
     
     jcmp.AddEvent('deathmatch/startcountdownsound', () => 
     {
-        $("body").css("opacity", "1");
+        $("#loading").css("opacity", "0");
+        $("#countdown").css("color", "red");
         if (countdownsound == null)
         {
             countdownsound = document.createElement("AUDIO");
@@ -81,23 +106,38 @@
         }
     
     });
-
     jcmp.AddEvent('deathmatch/fadeincountdown', () => {
-        $("body").css("opacity", "0");
-        $("body").css("background-color", "transparent");
-        $("body").addClass("animation2");
+        $("#countdown").css("color", "transparent");
+        $("#countdown").css("background-color", "transparent");
+        $("#countdown").addClass("animation2");
         setTimeout(function() {
-            $("body").css("background-color", "black");
-            $("body").removeClass("animation2");
+            $("#countdown").css("background-color", "black");
+            $("#countdown").removeClass("animation2");
+            $("#loading").css("opacity", "1");
         }, 1000);
     })
     
     jcmp.AddEvent('ResetCountdownCSS', () => {
-        $("body").css("opacity", "0");
-        $("body").css("background-color", "transparent");
+        $("#countdown").css("color", "transparent");
+        $("#countdown").css("background-color", "transparent");
+        $("#loading").css("opacity", "0");
     })
 
+    // Yay, animated loading dots so you'll know if you crash!
+    let dots = 0;
+    setInterval(() => {
+        let dots_s = "";
+        for(let i = 1; i <= dots; i ++)
+        {
+            dots_s = dots_s + ".";
+        }
+        $("#loading").text("Loading arena" + dots_s);
+        dots = (dots >= 3) ? 0 : dots + 1;
+    }, 500)
 
     </script>
-    <body>10</body>
+    <body id="wrapper">
+        <div id="countdown">10</div>
+        <div id="loading">Loading arena</div>
+    </body>
 </html>

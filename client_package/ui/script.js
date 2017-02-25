@@ -65,6 +65,7 @@ $(document).ready(function() {
             seconds = "0" + seconds;
         }
         $("div.playersinfo").text(`A game is currently in progress, please wait: ${minutes}:${seconds}`);
+        //$("div.playersinfo").text(`A game is currently in progress. Press X to spectate.`);
     }
 
     jcmp.AddEvent('deathmatch/changebordercolor', (color) => {

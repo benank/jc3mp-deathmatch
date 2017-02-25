@@ -21,9 +21,16 @@ function GetArenaData()
         })
         setTimeout(function() 
         {
-            dm.game.current_arena = arenas[Math.floor(Math.random() * arenas.length)];
-            dm.game.arenas = arenas;
-            console.log(`[DEATHMATCH] ${dm.game.arenas.length} arenas loaded!`);
+            if (arenas.length == 0)
+            {
+                console.log(`[DEATHMATCH] [ERROR] No arenas loaded! Please check config files!`);
+            }
+            else
+            {
+                dm.game.current_arena = arenas[Math.floor(Math.random() * arenas.length)];
+                dm.game.arenas = arenas;
+                console.log(`[DEATHMATCH] ${dm.game.arenas.length} arenas loaded!`);
+            }
         }, 500);
     });
 }

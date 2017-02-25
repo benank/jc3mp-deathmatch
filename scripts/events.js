@@ -43,14 +43,18 @@ jcmp.events.Add('PlayerVerified', (player) =>
         jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length);
         if (dm.config.chat_settings.on_join_leave)
         {
-            lang.broadcast(lang.formatMessage(lang.msgs.on_s_join, {name: player.name}));
             console.log(`${player.name} joined.`);
+            lang.broadcast(lang.formatMessage(lang.msgs.on_s_join, {name: player.name}));
         }
         jcmp.events.CallRemote('ChangeArena', player, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
         jcmp.events.CallRemote('NonIntegratedUI', player);
         gm.AddPlayerToLobby(player);
     }
 
+    if (dm.config.testing_settings.override_utility && dm.config.testing_settings.enabled)
+    {
+        jcmp.events.CallRemote('OverrideUtility', player);
+    }
     steam.UpdateSteamImages(player);
 
 })
@@ -84,7 +88,11 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
     if (dm.game.current_game != null)
     {
         dm.game.current_game.remove_player(player);
-        gm.CheckIfGameShouldEnd();
+        if (!dm.config.testing_settings.enabled)
+        {
+            gm.CheckIfGameShouldEnd();
+        }
+        dm.game.current_game.spectators = dm.game.current_game.spectators.filter(p => p.networkId != player.networkId);
     }
 
     dm.avatars = dm.avatars.filter(data => data.id != player.networkId);
@@ -146,4 +154,30 @@ jcmp.events.AddRemoteCallable('GameTeleportInitiated', (player) => {
 
 jcmp.events.AddRemoteCallable('GameTeleportCompleted', (player) => {
     player.dm.teleporting = false;
+})
+
+jcmp.events.AddRemoteCallable('BeginSpectate', (player) => {
+    if (dm.game.current_game == null || !dm.game.current_game.active)
+    {
+        console.log("PLAYER SPECTATE FAILED");
+        lang.send(player, lang.formatMessage(lang.msgs.on_spectate_fail, {}));
+        return;
+    }
+    console.log("BEGIN PLAYER SPECTATE");
+
+    jcmp.events.CallRemote('BeginSpectate', player, JSON.stringify(dm.game.current_game.defaults), JSON.stringify(dm.game.current_game.weaponSpawnPoints));
+    dm.game.current_game.spectators.push(player);
+    let data = dm.game.current_game.defaults.centerPoint;
+    player.position = new Vector3f(data.x, data.y, data.z);
+    
+    player.dms = [];
+    player.dms.position = player.position;
+    player.dms.dimension = player.dimension;
+    player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
+})
+
+jcmp.events.AddRemoteCallable('EndSpectate', (player) => {
+    console.log("END SPECTATE");
+    player.position = player.dms.position;
+    player.dimension = player.dms.dimension;
 })

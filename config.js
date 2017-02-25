@@ -20,7 +20,10 @@ module.exports =
     {
         enabled: false, // Whether or not testing mode is active and these settings will override the others
         wait_time: 7,
-        min_players: 1
+        min_players: 1,
+        override_utility: true // Whether or not the grapplehook/parachute/wingsuit settings in the arenas will be ignored
+        // Also gives the player unlimited fast jetpack for testing purposes
+        // Only overrides if testing is enabled
     },
     chat_settings: // Settings relating to chat messages
     {

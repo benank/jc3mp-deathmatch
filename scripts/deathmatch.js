@@ -14,6 +14,8 @@ class Deathmatch
         this.showdown_mode = false;
         this.lang = require('./lang');
         this.gm = require('./gameManager');
+        this.dead = []; // Keep track of dead people so spectators can know
+        this.spectators = []; // Keep track of spectators so we can send them stuff
     }
 
     start() // Initializes all game stuff but does not start game or countdown
@@ -66,6 +68,8 @@ class Deathmatch
         this.players.forEach(player => 
         {
             player.invulnerable = false;
+            // Set the player's dimension again because it might fix a rare bug where players dont see each other
+            player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
             jcmp.events.CallRemote('CountDownStart', player, 10);
             let timeout = setTimeout(() =>
             {
@@ -84,7 +88,6 @@ class Deathmatch
             let timeout = setTimeout(() =>
             {
                 this.tie_game();
-                this.gm.EndGame();
             }, this.defaults.showdown_time * 1000);
             this.timeouts.push(timeout);
         }, this.defaults.max_time * 1000 + 10000); // +10 seconds because of wait time at the beginning
@@ -112,18 +115,6 @@ class Deathmatch
         }
         this.active = false;
 
-        if (this.players.length > 1) // If there is more than one player at the end, it's a tie
-        {
-            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_tie, {num_players: this.players.length}));
-        }
-        else if (this.players.length == 1) // If there is exactly one player left
-        {
-            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended, {winner: winner}));
-        }
-        else // Everyone died somehow
-        {
-            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_die, {}));
-        }
     }
 
     pickup_weapon(player, index)
@@ -161,6 +152,11 @@ class Deathmatch
         {
             jcmp.events.CallRemote('WeaponRespawn', player, index);
         });
+
+        this.spectators.forEach(player =>
+        {
+            jcmp.events.CallRemote('WeaponRespawn', player, index);
+        });
     }
 
     broadcast_weap_take(index)
@@ -169,13 +165,17 @@ class Deathmatch
         {
             jcmp.events.CallRemote('WeaponTake', player, index);
         });
+
+        this.spectators.forEach(player =>
+        {
+            jcmp.events.CallRemote('WeaponTake', player, index);
+        });
     }
 
     player_won(player)
     {
         jcmp.events.CallRemote('ShowDeathScreen', player, 1, false);
-        //this.remove_player(player, true);
-        let timeout = setTimeout(function() 
+        let timeout = setTimeout(() => 
         {
             jcmp.events.CallRemote('EndGame', player);
             player.invulnerable = true;
@@ -185,6 +185,8 @@ class Deathmatch
             }
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
+            this.remove_player(player, true);
+            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended, {winner: player.name}));
         }, 5000);
         this.timeouts.push(timeout);
     }
@@ -193,7 +195,7 @@ class Deathmatch
     {
         jcmp.events.CallRemote('ShowDeathScreen', player, this.players.length, false);
         this.remove_player(player);
-        let timeout = setTimeout(function() 
+        let timeout = setTimeout(() => 
         {
             jcmp.events.CallRemote('EndGame', player);
             player.invulnerable = true;
@@ -205,36 +207,68 @@ class Deathmatch
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
         }, 5000);
         this.timeouts.push(timeout);
+
+        if (this.players.length == 0) // Everyone died somehow
+        {
+            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_die, {}));
+        }
+
     }
 
     tie_game()
     {
+        this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_tie, {num_players: this.players.length}));
         this.players.forEach(p => 
         {
             this.player_tied(p);
         });
-        this.end();
+
+        let timeout = setTimeout(() =>
+        {
+            this.gm.EndGame();
+        }, 5000);
+        this.timeouts.push(timeout);
     }
 
     player_tied(player)
     {
         player.invulnerable = true;
-        //this.remove_player(player, true);
         jcmp.events.CallRemote('ShowDeathScreen', player, 1, true);
+        let timeout = setTimeout(() =>  
+        {
+            jcmp.events.CallRemote('EndGame', player);
+            player.invulnerable = true;
+            if (dm.config.integrated_mode)
+            {
+                player.respawnPosition = player.dm.position;
+            }
+            player.Respawn();
+            player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
+            this.remove_player(player, true);
+        }, 5000);
+        this.timeouts.push(timeout);
     }
 
     remove_player(player, keep_avatar) // Sync it to everyone when number of ingame players changes
     {
-        if (!keep_avatar) // If we don't want the avatar to stay and WANT to X it out
+        const player_exists = this.players.find(p => p.networkId == player.networkId);
+        if (!keep_avatar && typeof player_exists != 'undefined') // If we don't want the avatar to stay and WANT to X it out
         {
+            this.dead.push(player.networkId);
             this.players.forEach(p => 
             {
+                jcmp.events.CallRemote('PlayerDiedDeathmatch', p, player.networkId);
+            });
+
+            this.spectators.forEach(p => 
+            {
+                // Spectators will automatically switch when a player dies if they are spectating them
                 jcmp.events.CallRemote('PlayerDiedDeathmatch', p, player.networkId);
             });
         }
 
         this.players = this.players.filter(p => p.networkId != player.networkId);
-        if (!dm.config.integrated_mode)
+        if (!dm.config.integrated_mode && typeof player_exists != 'undefined')
         {
             jcmp.events.CallRemote('SyncPlayersIngame', null, this.players.length);
         }

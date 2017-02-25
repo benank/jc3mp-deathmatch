@@ -39,11 +39,10 @@ function CheckGame()
                 });
                 timer = setTimeout(function() 
                 {
-                    players = dm.lobby;
                     if (players.length >= min_players)
                     {
                         let players_array = [];
-                        players.forEach(player =>
+                        dm.lobby.forEach(player =>
                         {
                             players_array[player.networkId] = player;
                         });

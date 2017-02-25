@@ -31,11 +31,17 @@ const border = new WebUIWindow("border", "package://deathmatch/ui/border.html", 
 border.autoRenderTexture = false;
 border.autoResize = false;
 border.captureMouseInput = false;
+border.hidden = true;
 
 const health_ui = new WebUIWindow("health_ui", "package://deathmatch/ui/health.html", new Vector2(jcmp.viewportSize.x, jcmp.viewportSize.y));
 health_ui.autoResize = true;
 health_ui.captureMouseInput = false;
 health_ui.hidden = true;
+
+const spectate_ui = new WebUIWindow("spectate_ui", "package://deathmatch/ui/spectate.html", new Vector2(jcmp.viewportSize.x, jcmp.viewportSize.y));
+spectate_ui.autoResize = true;
+spectate_ui.captureMouseInput = false;
+spectate_ui.hidden = true;
 
 const weapon_icons = [];
 weapon_icons.pistol = new WebUIWindow("weapon_icon1", "package://deathmatch/ui/weapons/pistol.html", new Vector2(500, 500));
@@ -66,6 +72,9 @@ let shrink_size = 0;
 let steam_urls = [];
 let camera_position = new Vector3f(0,0,0);
 let localplayer = jcmp.players.find(p => p.networkId == jcmp.localPlayer.networkId);
+let override_utility = false;
+let spectating = false;
+let spectating_player = null;
 
 const weathers = 
 [
@@ -79,9 +88,6 @@ const weathers =
 
 
 let ingame = false;
-
-//jcmp.localPlayer.wingsuit.boostDuration = 10000000;
-//jcmp.localPlayer.wingsuit.boostPower = 1000;
 
 jcmp.ui.AddEvent('SecondTick', () => {
 
@@ -99,9 +105,8 @@ jcmp.ui.AddEvent('SecondTick', () => {
         jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', countdownTime);
         if (countdownTime == 0)
         {
-            jcmp.localPlayer.frozen = false;
-            jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', "GO!");
             jcmp.localPlayer.controlsEnabled = true;
+            jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', "GO!");
             ingame_ui.hidden = false;
             jcmp.ui.CallEvent('deathmatch/setingametime', defaults.max_time);
             timer_ui.hidden = false;
@@ -121,7 +126,7 @@ jcmp.ui.AddEvent('SecondTick', () => {
             leaving_field = false;
         }
 
-        if (leaving_field && ingame)
+        if (leaving_field && ingame && countdownTime == 0)
         {
             leaving_field_time = (leaving_field_time > 0) ? leaving_field_time - 1 : 0;
             jcmp.ui.CallEvent('deathmatch/updateleavingfield', leaving_field_time);
@@ -148,16 +153,97 @@ jcmp.ui.AddEvent('SecondTick', () => {
                 near_weapons.push(spawn);
             }
         });
+        jcmp.ui.CallEvent('deathmatch/decreaseingametime'); // Decrease time for those ingame
     }
-    if (num_ingame >= 1)
+    if (num_ingame >= 1 && !ingame)
     {
-        jcmp.ui.CallEvent('deathmatch/decreaseingametime');
+        jcmp.ui.CallEvent('deathmatch/decreaseingametime'); // Decrease time for those out of game in non-integrated mode
     }
-    else
+    if (spectating && (spectating_player == null || typeof spectating_player == 'undefined'))
     {
-        jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+        spectating_player = GetNewSpectatingPlayer();
     }
 })
+
+
+let can_spec = true;
+
+jcmp.ui.AddEvent('chat_input_state', s => {
+  can_spec = !s;
+});
+
+jcmp.ui.AddEvent('KeyPress', (key) => {
+    if (key == "x".charCodeAt(0) && !ingame && !integrated_ui && can_spec) // No spectating for integrated yet
+    {
+        jcmp.print("SPECTATE BUTTON");
+        if (spectating)
+        {
+            jcmp.print("END SPECTATE");
+            spectating = false;
+            spectating_player = null;
+            jcmp.localPlayer.frozen = false;
+            if (!integrated_ui)
+            {
+                ui.hidden = false;
+                ResetCamera();
+            }
+            else
+            {
+                jcmp.localPlayer.camera.attachedToPlayer = true;
+            }
+            ingame_ui.hidden = true;
+            leavingmsg.hidden = true;
+            countdown_sound = false;
+            timer_ui.hidden = true;
+            shrink_border = false;
+            countdown.hidden = true;
+            health_ui.hidden = true;
+            spectate_ui.hidden = true;
+            //leaving_field_time = leaving_field_default_time; // Eventually calculate if spectated player is out of bounds
+            jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+            jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+            jcmp.world.weather = 0;
+            jcmp.events.CallRemote('EndSpectate');
+        }
+        else
+        {
+            jcmp.events.CallRemote('BeginSpectate');
+            jcmp.print("BEGIN SPECTATE");
+        }
+    }
+    else if (key == 32 && spectating && can_spec) // key 32 is space
+    {
+        spectating_player = GetNextSpectatingPlayer();
+    }
+})
+
+function GetNewSpectatingPlayer()
+{
+    let players = jcmp.players.filter(p => p.networkId != jcmp.localPlayer.networkId);
+    spectating_index = Math.floor(Math.random() * players.length);
+    jcmp.print(`got new spectating index ${spectating_index} with length ${players.length}`);
+    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[spectating_index].networkId);
+    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[spectating_index].name);
+    return players[spectating_index];
+}
+
+function GetNextSpectatingPlayer()
+{
+    index = (spectating_index + 1 > jcmp.players.length - 1) ? 0 : spectating_index + 1;
+    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[spectating_index].networkId);
+    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[spectating_index].name);
+    if (typeof jcmp.players[index] == 'undefined')
+    {
+        //return GetNextSpectatingPlayer();
+        return null; // Not going full out on the recursion just yet
+        // Returning null is safe because the secondtick gets a new one anyway
+    }
+    else if (jcmp.players[index].networkId == jcmp.localPlayer.networkId)
+    {
+        return GetNextSpectatingPlayer(); // This should only recurse once ... if it does more than that, it's gon b bad
+    }
+    return players[Math.floor(Math.random() * players.length)];
+}
 
 jcmp.events.AddRemoteCallable('EndGame', () => {
     ingame = false;
@@ -167,17 +253,26 @@ jcmp.events.AddRemoteCallable('EndGame', () => {
         ResetCamera();
     }
     ingame_ui.hidden = true;
-    border.hidden = true;
     leavingmsg.hidden = true;
     countdown_sound = false;
     timer_ui.hidden = true;
     shrink_border = false;
     countdown.hidden = true;
     health_ui.hidden = true;
+    leaving_field_time = leaving_field_default_time;
     jcmp.ui.CallEvent('ResetCountdownCSS');
     jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
     jcmp.events.Call('EndDeathmatchRound');
     jcmp.world.weather = 0;
+
+    // Reset grapple, para, and wings abilities in case of freeroam
+    jcmp.localPlayer.SetAbilityEnabled(0xCB836D80, true);
+    jcmp.localPlayer.SetAbilityEnabled(0xCEEFA27A, true);
+    jcmp.localPlayer.SetAbilityEnabled(0xE060F641, true);
+})
+
+jcmp.events.AddRemoteCallable('OverrideUtility', () => {
+    override_utility = true;
 })
 
 jcmp.events.AddRemoteCallable('NonIntegratedUI', () => {
@@ -248,6 +343,29 @@ function ResetCamera()
     jcmp.localPlayer.frozen = true;
 }
 
+jcmp.events.AddRemoteCallable('BeginSpectate', (d, w) => {
+    defaults = JSON.parse(d);
+    center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
+    diameter = new Vector2f(defaults.diameter, defaults.diameter);
+    if (weathers.indexOf(defaults.weather) > -1)
+    {
+        jcmp.world.weather = weathers.indexOf(defaults.weather);
+    }
+    m = CreateNewBorderMatrix();
+    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', true);
+    jcmp.localPlayer.frozen = true;
+    weaponSpawns = [];
+    near_weapons = [];
+    weaponSpawns = JSON.parse(w);
+    spectating_player = GetNewSpectatingPlayer();
+    spectating = true;
+    spectate_ui.hidden = false;
+    ingame_ui.hidden = false;
+    timer_ui.hidden = false;
+    health_ui.hidden = false;
+    ui.hidden = true;
+})
+
 jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
     defaults = JSON.parse(data);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
@@ -257,6 +375,24 @@ jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
         jcmp.world.weather = weathers.indexOf(defaults.weather);
     }
     m = CreateNewBorderMatrix();
+    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+
+    if (override_utility)
+    {
+        jcmp.localPlayer.wingsuit.boostDuration = 10000000;
+        jcmp.localPlayer.wingsuit.boostPower = 1000;
+        jcmp.localPlayer.SetAbilityEnabled(0xCB836D80, true);
+        jcmp.localPlayer.SetAbilityEnabled(0xCEEFA27A, true);
+        jcmp.localPlayer.SetAbilityEnabled(0xE060F641, true);
+    }
+    else
+    {
+        jcmp.localPlayer.wingsuit.boostEnabled = false; // No boost on ALL maps
+        jcmp.localPlayer.SetAbilityEnabled(0xCB836D80, defaults.grapple_enabled);
+        jcmp.localPlayer.SetAbilityEnabled(0xCEEFA27A, defaults.para_enabled);
+        jcmp.localPlayer.SetAbilityEnabled(0xE060F641, defaults.wings_enabled);
+    }
+    jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
     //jcmp.world.SetTime(defaults.time.hour, defaults.time.minutes);
 })
 
@@ -278,11 +414,11 @@ jcmp.events.AddRemoteCallable('CountDownStart', (time) => {
     countdownTime = time;
     jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', countdownTime);
     jcmp.localPlayer.camera.attachedToPlayer = true;
+    jcmp.localPlayer.frozen = false;
     jcmp.localPlayer.controlsEnabled = false;
     ui.hidden = true;
     ingame = true;
     death_ui.hidden = true;
-    jcmp.print("COUNT DOWN START");
 })
 
 jcmp.events.AddRemoteCallable('SyncIngameTime', (time, showdown) => {
@@ -323,12 +459,10 @@ jcmp.ui.AddEvent('MainUILoaded', () => {
 })
 
 jcmp.events.Add('GameTeleportInitiated', () => {
-    jcmp.print("GameTeleportInitiated");
     jcmp.events.CallRemote('GameTeleportInitiated');
 })
 
 jcmp.events.Add('GameTeleportCompleted', () => {
-    jcmp.print("GameTeleportCompleted");
     jcmp.events.CallRemote('GameTeleportCompleted');
 })
 
@@ -336,9 +470,13 @@ jcmp.events.Add('GameTeleportCompleted', () => {
 let m = CreateNewBorderMatrix();
 
 jcmp.events.Add("GameUpdateRender", (renderer) => {
-    if (!ingame)
+    if (!ingame && !spectating)
     {
         return;
+    }
+    if (spectating && spectating_player != null)
+    {
+        SpectateCamera(spectating_player, renderer);
     }
     RenderWeapons(renderer);
     renderer.SetTransform(m);
@@ -363,11 +501,23 @@ jcmp.events.Add("GameUpdateRender", (renderer) => {
         let new_size = (diameter.x > shrink_size) ? diameter.x - 0.75 : shrink_size;
         diameter = new Vector2f(new_size, new_size);
     }
-    if (typeof localplayer != undefined)
+    if (typeof localplayer != undefined && !spectating)
     {
         jcmp.ui.CallEvent('deathmatch/updatehealthui', (localplayer.health / localplayer.maxHealth));
     }
+    else if (spectating && typeof spectating_player != 'undefined' && spectating_player != null)
+    {
+        jcmp.ui.CallEvent('deathmatch/updatehealthui', (spectating_player.health / spectating_player.maxHealth));
+    }
 });
+
+function SpectateCamera(player, r)
+{
+    let head_pos = player.GetBoneTransform(0xA877D9CC, r.dtf).position;
+    jcmp.localPlayer.camera.attachedToPlayer = false;
+    jcmp.localPlayer.camera.position = lerp(jcmp.localPlayer.camera.position, head_pos.add(new Vector3f(0,0.5,0), 0.8));
+    jcmp.localPlayer.camera.rotation = lerp(jcmp.localPlayer.camera.rotation, player.rotation, 0.9);
+}
 
 function RenderWeapons(r)
 {
@@ -390,7 +540,7 @@ function RenderWeapons(r)
             r.DrawTexture(weapon_icons[weapon.type].texture, w_translate, new Vector2f(size,size));
             
             let dist = Distance(player_pos, pos);
-            if (dist < pickup_dist)
+            if (dist < pickup_dist && !spectating)
             {
                 let index = GetWeaponIndex(spawn);
                 jcmp.events.CallRemote('PickupWeapon', index);
@@ -437,6 +587,11 @@ function GetWeaponIndex(spawn)
         }
     };
     return null;
+}
+
+function lerp(a,b,t)
+{
+    return new Vector3f(a.x + (a.x - b.x) * t, a.y + (a.y - b.y) * t, a.z + (a.z - b.z) * t);
 }
 
 

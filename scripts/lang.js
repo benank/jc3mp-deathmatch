@@ -26,6 +26,8 @@ const msgs =
      "to enter the lobby! Currently there are ${num_players} players in the lobby.",
      on_welcome: "Welcome to ${dm.config.chat_settings.prefix.color}Deathmatch${dm.config.chat_settings.welcome_color}! I hope you enjoy your " +
      "stay here, ${dm.config.chat_settings.player_color}${name}${dm.config.chat_settings.welcome_color}. Good luck!",
+    on_spectate_fail: "${dm.config.chat_settings.prefix.color}${dm.config.chat_settings.prefix.name} ${dm.config.chat_settings.body_color}" +
+     "Spectate failed.  Please try again in 10-15 seconds.",
      on_s_join: "<i>${dm.config.chat_settings.server_js_color}${name} joined.</i>",
      on_s_leave: "<i>${dm.config.chat_settings.server_js_color}${name} left.</i>"
 }
