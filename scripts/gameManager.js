@@ -24,47 +24,49 @@ let timer;
 // Continuously checks if a game should start or end
 function CheckGame()
 {
-    let players = dm.lobby;
-
     if (dm.game.current_game == null)
     {
-        if (players.length >= min_players && timer == null)
+        if (dm.lobby.length >= min_players && timer == null)
         {
             lang.broadcast(lang.formatMessage(lang.msgs.on_start_soon, {time: wait_time}));
             timer = setTimeout(function() 
             {
-                players.forEach(player =>
+                if (dm.lobby.length >= min_players)
                 {
-                    jcmp.events.CallRemote('FadeInCountdown', player);
-                });
-                timer = setTimeout(function() 
-                {
-                    if (players.length >= min_players)
+                    dm.lobby.forEach(player =>
                     {
-                        let players_array = [];
-                        dm.lobby.forEach(player =>
-                        {
-                            players_array[player.networkId] = player;
-                        });
-                        lang.broadcast(lang.formatMessage(lang.msgs.on_starting, {num_players: players_array.length}));
-                        StartGame(players_array, dm.game.current_arena);
-                    }
-                    else if (dm.game.current_game == null)
+                        jcmp.events.CallRemote('FadeInCountdown', player);
+                    });
+                    
+                    timer = setTimeout(function() 
                     {
-                        players.forEach(p => 
+                        if (dm.lobby.length >= min_players)
                         {
-                            jcmp.events.CallRemote('EndGame', p);
-                            jcmp.events.CallRemote('CleanupIngameUI', p);
-                        });
-                    }
+                            let players_array = [];
+                            dm.lobby.forEach(player =>
+                            {
+                                players_array[player.networkId] = player;
+                            });
+                            lang.broadcast(lang.formatMessage(lang.msgs.on_starting, {num_players: players_array.length}));
+                            StartGame(players_array, dm.game.current_arena);
+                        }
+                        else if (dm.game.current_game == null)
+                        {
+                            dm.lobby.forEach(p => 
+                            {
+                                jcmp.events.CallRemote('EndGame', p);
+                                jcmp.events.CallRemote('CleanupIngameUI', p);
+                            });
+                        }
 
-                    if (dm.config.integrated_mode)
-                    {
-                        dm.lobby = []; // Reset lobby only if integrated mode is on
-                    }
-                    clearTimeout(timer);
-                    timer = null;
-                }, wait_time * 0.3 * 1000);
+                        if (dm.config.integrated_mode)
+                        {
+                            dm.lobby = []; // Reset lobby only if integrated mode is on
+                        }
+                        clearTimeout(timer);
+                        timer = null;
+                    }, wait_time * 0.3 * 1000);
+                }
             }, wait_time * 0.7 * 1000);
         }
     }

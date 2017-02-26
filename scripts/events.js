@@ -18,7 +18,9 @@ jcmp.events.Add('PlayerCreated', (player) =>
     player.dm = [];
 })
 
-jcmp.events.Add('PlayerReady', (player) => 
+// PlayerVerified is a custom event from verifier that waits for certain modules to load completely
+// PlayerReady is default substitute
+jcmp.events.Add('PlayerVerified', (player) => 
 {
     if (!dm.config.integrated_mode)
     {

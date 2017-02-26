@@ -2,7 +2,7 @@
     "enabled" : true,
     "defaults" : 
     {
-        "name" : "Island Chaos",
+        "name" : "Chaos Island",
         "centerPoint" : {"x": 11560.6279296875, "y": 1068.029052734375, "z": 15175.9765625},
         "diameter" : 950,
         "max_y" : 300,

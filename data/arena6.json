@@ -1,0 +1,85 @@
+{
+    "enabled" : false,
+    "defaults" : 
+    {
+        "name" : "Pirate's Cove",
+        "centerPoint" : {"x": -1308.646484375, "y": 1000.8560791015625, "z": 2012.3424072265625},
+        "diameter" : 3000,
+        "max_y" : 800,
+        "max_time" : 1500,
+        "showdown_time" : 120,
+        "time" : {"hour": 12, "minute": 30},
+        "time_step" : 0,
+        "grapple_enabled" : true,
+        "para_enabled" : false,
+        "wings_enabled" : false,
+        "weather" : "base",
+        "weapons" : 
+        {
+            "pistol" : 
+            [
+                {"hash": 2144721124, "name": "CS44 Peacebringer", "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 3944301769, "name": "CS Spectre Mark V", "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 3305603558, "name": "The Little General","min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5},
+                {"hash": 4040374394, "name": "U-55S Pozhar",      "min_ammo": 40, "max_ammo": 90, "respawn_time": 0.5}
+            ],
+            "submachine" : 
+            [
+                {"hash": 1709033370, "name": "Prizrak U4",      "min_ammo": 120, "max_ammo": 240, "respawn_time": 1},
+                {"hash": 89410586, "name": "CS Wraith 225R",    "min_ammo": 120, "max_ammo": 240, "respawn_time": 1},
+                {"hash": 2470879546, "name": "CS9 PDW-K",       "min_ammo": 120, "max_ammo": 240, "respawn_time": 1}
+            ],
+            "shotgun" : 
+            [
+                {"hash": 1549148855, "name": "Automat U12",     "min_ammo": 30, "max_ammo": 80, "respawn_time": 1},
+                {"hash": 2219364824, "name": "U-24 Zabijak",    "min_ammo": 30, "max_ammo": 80, "respawn_time": 1}
+            ],
+            "sniper" : 
+            [
+                {"hash": 37039781, "name": "CS110 Archangel",   "min_ammo": 15, "max_ammo": 30, "respawn_time": 1.5},
+                {"hash": 3923877588, "name": "USV 45 Sokol",    "min_ammo": 15, "max_ammo": 30, "respawn_time": 1.5}
+            ],
+            "assault" : 
+            [
+                {"hash": 1394636892, "name": "CS27 Misfortune", "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 2621157955, "name": "CS Predator",     "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 2307691279, "name": "U-39 Plechovka",  "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5},
+                {"hash": 3681410946, "name": "UPM61",           "min_ammo": 60, "max_ammo": 200, "respawn_time": 1.5}
+            ],
+            "rocket" : 
+            [
+                {"hash": 3070823687, "name": "Capstone Hydra",  "min_ammo": 3, "max_ammo": 10, "respawn_time": 2},
+                {"hash": 2042423840, "name": "CS Negotiator",   "min_ammo": 5, "max_ammo": 15, "respawn_time": 2},
+                {"hash": 68160093,   "name": "Fire Leech",      "min_ammo": 4, "max_ammo": 14, "respawn_time": 2},
+                {"hash": 1440484885, "name": "Urga Stupka-210", "min_ammo": 10, "max_ammo": 20, "respawn_time": 2},
+                {"hash": 3913913650, "name": "UVK-13",          "min_ammo": 4, "max_ammo": 13, "respawn_time": 2},
+                {"hash": 1064776106, "name": "M488",            "min_ammo": 3, "max_ammo": 6, "respawn_time": 3},
+                {"hash": 3191136252, "name": "GuitaRPG",        "min_ammo": 10, "max_ammo": 17, "respawn_time": 2}
+            ],
+            "grenade" : 
+            [
+                {"hash": 791899882, "name": "Fragmentation Grenade"}
+            ]
+        }
+    },
+    "playerSpawnPoints" : 
+    [
+        {"x": -1308.646484375, "y": 1028.8560791015625, "z": 2012.3424072265625}
+    ],
+    "weaponSpawnPoints" : 
+    [
+        {"x": 11605.9052734375, "y": 1028.32763671875, "z": 15531.3330078125, "type": "rocket"},
+
+        {"x": 11558.0009765625, "y": 1068.0335693359375, "z": 15174.5146484375, "type": "sniper"},
+
+
+        {"x": 11559.8232421875, "y": 1068.058349609375, "z": 15178.0390625, "type": "assault"},
+
+        {"x": 11521.8056640625, "y": 1068.144775390625, "z": 15132.8740234375, "type": "shotgun"},
+
+        {"x": 11588.28515625, "y": 1027.9287109375, "z": 14908.7314453125, "type": "submachine"},
+
+        {"x": 11589.2197265625, "y": 1073.517578125, "z": 15143.052734375, "type": "pistol"}
+
+    ]
+}

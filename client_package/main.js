@@ -591,7 +591,7 @@ function GetWeaponIndex(spawn)
 
 function lerp(a,b,t)
 {
-    return new Vector3f(a.x + (a.x - b.x) * t, a.y + (a.y - b.y) * t, a.z + (a.z - b.z) * t);
+    return a.mul(t).add(b.mul(1-t));
 }
 
 

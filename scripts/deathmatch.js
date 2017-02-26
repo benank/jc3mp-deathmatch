@@ -16,6 +16,7 @@ class Deathmatch
         this.gm = require('./gameManager');
         this.dead = []; // Keep track of dead people so spectators can know
         this.spectators = []; // Keep track of spectators so we can send them stuff
+        this.winner_announced = false;
     }
 
     start() // Initializes all game stuff but does not start game or countdown
@@ -97,14 +98,7 @@ class Deathmatch
     end()
     {
         console.log("[DEATHMATCH] A game has ended");
-        let winner = "";
-        if (this.players.length > 0)
-        {
-            this.players.forEach(player => 
-            {
-                winner = player.name; // There should only be one player in here if it's not a tie
-            });
-        }
+        
         this.timeouts.forEach(timeout =>
         {
             clearTimeout(timeout); // Clear all active timeouts
@@ -186,7 +180,11 @@ class Deathmatch
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
             this.remove_player(player, true);
-            this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended, {winner: player.name}));
+            if (!this.winner_announced)
+            {
+                this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended, {winner: player.name}));
+                this.winner_announced = true;
+            }
         }, 5000);
         this.timeouts.push(timeout);
     }
