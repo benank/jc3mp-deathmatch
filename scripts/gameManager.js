@@ -108,10 +108,20 @@ function CheckIfGameShouldEnd()
 
 function StopGame()
 {
-    dm.game.current_game.players.forEach(function(player) 
+    if (dm.game.current_game.players.length > 1)
     {
-        dm.game.current_game.player_won(player);
-    });
+        dm.game.current_game.players.forEach(function(player) 
+        {
+            dm.game.current_game.player_tied(player);
+        });
+    }
+    else if (dm.game.current_game.players.length == 1)
+    {
+        dm.game.current_game.players.forEach(function(player) 
+        {
+            dm.game.current_game.player_won(player);
+        });
+    }
 
     setTimeout(function() 
     {
@@ -142,6 +152,7 @@ function AddPlayerToLobby(player)
 
 function RemovePlayerFromLobby(player)
 {
+    dm.lobby = dm.lobby.filter(p => typeof p != 'undefined');
     dm.lobby = dm.lobby.filter(p => p.networkId != player.networkId);
 }
 
@@ -150,5 +161,5 @@ module.exports =
     CheckIfGameShouldEnd,
     AddPlayerToLobby,
     RemovePlayerFromLobby,
-    EndGame
+    StopGame
 }

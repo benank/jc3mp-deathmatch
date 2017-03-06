@@ -90,6 +90,7 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
         {
             gm.CheckIfGameShouldEnd();
         }
+        dm.game.current_game.check_for_nulls();
         dm.game.current_game.spectators = dm.game.current_game.spectators.filter(p => p.networkId != player.networkId);
     }
 
@@ -172,6 +173,8 @@ jcmp.events.AddRemoteCallable('BeginSpectate', (player) => {
     player.dms.position = player.position;
     player.dms.dimension = player.dimension;
     player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
+    jcmp.events.CallRemote('SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
+    jcmp.events.CallRemote('SpectatingAvatarsUpdate', player, JSON.stringify(dm.game.current_game.dead));
 })
 
 jcmp.events.AddRemoteCallable('EndSpectate', (player) => {

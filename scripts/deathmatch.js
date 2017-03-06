@@ -206,9 +206,10 @@ class Deathmatch
         }, 5000);
         this.timeouts.push(timeout);
 
-        if (this.players.length == 0) // Everyone died somehow
+        if (this.players.length == 0) // Everyone died
         {
             this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_die, {}));
+            this.winner_announced = true;
         }
 
     }
@@ -216,15 +217,7 @@ class Deathmatch
     tie_game()
     {
         this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_tie, {num_players: this.players.length}));
-        this.players.forEach(p => 
-        {
-            this.player_tied(p);
-        });
-
-        let timeout = setTimeout(() =>
-        {
-            this.gm.EndGame();
-        }, 5000);
+        this.gm.StopGame();
         this.timeouts.push(timeout);
     }
 
@@ -235,6 +228,7 @@ class Deathmatch
         let timeout = setTimeout(() =>  
         {
             jcmp.events.CallRemote('EndGame', player);
+            jcmp.events.CallRemote('CleanupIngameUI', player);
             player.invulnerable = true;
             if (dm.config.integrated_mode)
             {
@@ -249,6 +243,7 @@ class Deathmatch
 
     remove_player(player, keep_avatar) // Sync it to everyone when number of ingame players changes
     {
+        this.check_for_nulls();
         const player_exists = this.players.find(p => p.networkId == player.networkId);
         if (!keep_avatar && typeof player_exists != 'undefined') // If we don't want the avatar to stay and WANT to X it out
         {
@@ -265,6 +260,7 @@ class Deathmatch
             });
         }
 
+        this.check_for_nulls();
         this.players = this.players.filter(p => p.networkId != player.networkId);
         if (!dm.config.integrated_mode && typeof player_exists != 'undefined')
         {
@@ -298,6 +294,12 @@ class Deathmatch
     get_random_adjust(num)
     {
         return (Math.random() > 0.5) ? - Math.random() * num : Math.random() * num;
+    }
+
+    check_for_nulls() // Makes sure that arrays of players don't bug out and contain bad things
+    {
+        this.players = this.players.filter(p => typeof p != 'undefined');
+        this.spectators = this.spectators.filter(p => typeof p != 'undefined');
     }
 
 

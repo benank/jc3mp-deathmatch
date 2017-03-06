@@ -11,7 +11,7 @@
         "time" : {"hour": 12, "minute": 30},
         "time_step" : 0,
         "grapple_enabled" : true,
-        "para_enabled" : true,
+        "para_enabled" : false,
         "wings_enabled" : false,
         "weather" : "base",
         "weapons" : 

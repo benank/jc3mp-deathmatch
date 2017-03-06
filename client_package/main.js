@@ -343,6 +343,8 @@ function ResetCamera()
     jcmp.localPlayer.frozen = true;
 }
 
+
+
 jcmp.events.AddRemoteCallable('BeginSpectate', (d, w) => {
     defaults = JSON.parse(d);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
@@ -432,7 +434,8 @@ jcmp.events.AddRemoteCallable('SyncIngameTime', (time, showdown) => {
 jcmp.events.AddRemoteCallable('SteamAvatarURLUpdate', (data) => {
     steam_urls = JSON.parse(data);
     steam_urls.forEach(function(profile) {
-        if (profile.id == jcmp.localPlayer.networkId)
+        if ((profile.id == jcmp.localPlayer.networkId && !spectating) || 
+        (spectating && typeof spectating_player != 'undefined' && spectating_player.networkId == profile.id))
         {
             profile.localplayer = true;
         }
@@ -440,9 +443,20 @@ jcmp.events.AddRemoteCallable('SteamAvatarURLUpdate', (data) => {
     jcmp.ui.CallEvent('deathmatch/updatesteamavatars', JSON.stringify(steam_urls));
 })
 
+jcmp.events.AddRemoteCallable('SpectatingAvatarsUpdate', (avatars) => {
+    let data = JSON.parse(avatars);
+    data.forEach(function(id) {
+        jcmp.ui.CallEvent('deathmatch/playerdied', id); // Update dead avatars for spectators
+    });
+})
+
 jcmp.events.AddRemoteCallable('PlayerDiedDeathmatch', (id) => {
     jcmp.ui.CallEvent('deathmatch/playerdied', id);
     jcmp.ui.CallEvent('deathmatch/cannonsound');
+    if (spectating && spectating_player.networkId == id)
+    {
+        spectating_player = GetNewSpectatingPlayer();
+    }
 })
 
 jcmp.events.AddRemoteCallable('RemoveSteamAvatar', (id) => {
@@ -591,7 +605,8 @@ function GetWeaponIndex(spawn)
 
 function lerp(a,b,t)
 {
-    return a.mul(t).add(b.mul(1-t));
+    //return a.add(b.sub(a).mul(t));
+    return b;
 }
 
 
