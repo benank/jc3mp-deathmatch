@@ -31,17 +31,6 @@ const msgs =
      on_s_join: "<i>${dm.config.chat_settings.server_js_color}${name} joined.</i>",
      on_s_leave: "<i>${dm.config.chat_settings.server_js_color}${name} left.</i>"
 }
-    /*chat_settings: // Settings relating to chat messages
-    {
-        enabled: true, // Whether or not Deathmatch will send chat messages at all
-        prefix: // Prefix to all messages sent by Deathmatch
-        {
-            name: "[Deathmatch]", 
-            color: "[#FF0000]"
-        },
-        body_color: "[#33FF81]", // Color of the body of the messages
-        arena_color: "[#FF7300]", // Color of the arena names 
-        player_color: "[#FFFF00]" // Color of player names*/
 
 function broadcast(message)
 {
