@@ -38,7 +38,7 @@ jcmp.events.Add('PlayerReady', (player) =>
         player.invulnerable = true;
         player.dimension = 1;
         player.position = new Vector3f(3891.033203125, 1557.2899169921875, 687.85791015625);
-        jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length);
+        jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
         if (dm.config.chat_settings.on_join_leave)
         {
             console.log(`${player.name} joined.`);
@@ -77,7 +77,7 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
         }
         setTimeout(function() 
         {
-            jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length);
+            jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
         }, 1000);
     }
     
