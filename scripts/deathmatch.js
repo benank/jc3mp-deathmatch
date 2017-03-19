@@ -53,7 +53,16 @@ class Deathmatch
 
             player.Respawn();
             jcmp.events.CallRemote('SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
-            jcmp.events.Call('ChangeTime', this.defaults.time.minute, this.defaults.time.hour)
+            jcmp.events.Call('ChangeTime', this.defaults.time.minute, this.defaults.time.hour);
+
+            // Hacky weapon "removal" until 0.9.9
+            player.GiveWeapon(2307691279, 0, true);
+            player.GiveWeapon(3923877588, 0, true);
+            player.GiveWeapon(2144721124, 0, true);
+
+            player.GiveWeapon(1394636892, 0, true);
+            player.GiveWeapon(2042423840, 0, true);
+            player.GiveWeapon(89410586, 0, true);
             
         });
 
@@ -65,7 +74,7 @@ class Deathmatch
 
     begin_game() // Actually begins the game after players have loaded
     {
-        console.log("BEGIN GAME");
+        //console.log("BEGIN GAME");
         this.players.forEach(player => 
         {
             player.invulnerable = false;
@@ -211,7 +220,7 @@ class Deathmatch
             this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_die, {}));
             this.winner_announced = true;
         }
-
+        
     }
 
     tie_game()

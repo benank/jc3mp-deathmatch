@@ -287,9 +287,9 @@ jcmp.events.AddRemoteCallable('FadeInCountdown', () => {
     jcmp.ui.CallEvent('deathmatch/fadeincountdown');
 })
 
-jcmp.events.AddRemoteCallable('SyncOnlinePlayers', (num) => {
+jcmp.events.AddRemoteCallable('SyncOnlinePlayers', (num, needed) => {
     num_players = num;
-    jcmp.ui.CallEvent('NumPlayers', num_players);
+    jcmp.ui.CallEvent('NumPlayers', num_players, needed);
 })
 
 jcmp.events.AddRemoteCallable('BorderShrinkSpectator', (time) => {
@@ -311,6 +311,9 @@ jcmp.events.AddRemoteCallable('ShowDeathScreen', (num, tied) => {
     ingame = false;
     countdown.hidden = true;
     health_ui.hidden = true;
+    countdownTime = 0;
+    countdown_sound = false;
+    jcmp.ui.CallEvent('CleanupIngameUI');
 })
 
 jcmp.events.AddRemoteCallable('CleanupIngameUI', () => {

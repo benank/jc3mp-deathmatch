@@ -4,7 +4,7 @@
     {
         "name" : "Shipwreck Island",
         "centerPoint" : {"x": -1981.5205078125, "y": 1000.080078125, "z": 8129.16162109375},
-        "diameter" : 1500,
+        "diameter" : 1600,
         "max_y" : 500,
         "max_time" : 900,
         "showdown_time" : 120,

@@ -6,8 +6,9 @@ $(document).ready(function() {
 
     jcmp.CallEvent('MainUILoaded');
 
-    jcmp.AddEvent('NumPlayers', (num) => {
+    jcmp.AddEvent('NumPlayers', (num, needed) => {
         num_players = num;
+        min_players = needed;
         $("#numonline").text(num_players.toString());
         UpdateText();
     })
@@ -26,7 +27,14 @@ $(document).ready(function() {
         }
         else if (num_ingame == 0 && num_players < min_players)
         {
-            $("div.playersinfo").text("Waiting for at least 1 more player before starting game...");
+            if (min_players-num_players == 1)
+            {
+                $("div.playersinfo").text(`Waiting for at least ${min_players-num_players} more player before starting game...`);
+            }
+            else
+            {
+                $("div.playersinfo").text(`Waiting for at least ${min_players-num_players} more players before starting game...`);
+            }
         }
         else if (num_ingame == 0 && num_players >= min_players)
         {

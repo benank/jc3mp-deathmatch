@@ -72,7 +72,7 @@ function CheckGame()
     }
     else if(dm.game.current_game != null)
     {
-        if (!dm.config.testing_settings.enabled)
+        if (!dm.config.testing_settings.enabled || jcmp.players.length == 0)
         {
             CheckIfGameShouldEnd(); // If we aren't testing with one person, do normal checks
         }
@@ -128,6 +128,10 @@ function StopGame()
         if (dm.game.current_game != null)
         {
             EndGame();
+        }
+        else
+        {
+            dm.game.current_game = null;
         }
     }, 5500);
 }
