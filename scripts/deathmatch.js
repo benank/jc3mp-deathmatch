@@ -118,6 +118,13 @@ class Deathmatch
         }
         this.active = false;
 
+        this.spectators.forEach((p) => 
+        {
+            p.position = p.dms.position;
+            p.dimension = p.dms.dimension;
+            jcmp.events.CallRemote('EndSpectate', p);
+        });
+
     }
 
     pickup_weapon(player, index)
@@ -227,7 +234,6 @@ class Deathmatch
     {
         this.lang.broadcast(this.lang.formatMessage(this.lang.msgs.on_ended_tie, {num_players: this.players.length}));
         this.gm.StopGame();
-        this.timeouts.push(timeout);
     }
 
     player_tied(player)

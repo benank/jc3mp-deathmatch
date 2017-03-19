@@ -175,10 +175,8 @@ jcmp.ui.AddEvent('chat_input_state', s => {
 jcmp.ui.AddEvent('KeyPress', (key) => {
     if (key == "x".charCodeAt(0) && !ingame && !integrated_ui && can_spec) // No spectating for integrated yet
     {
-        jcmp.print("SPECTATE BUTTON");
         if (spectating)
         {
-            jcmp.print("END SPECTATE");
             spectating = false;
             spectating_player = null;
             jcmp.localPlayer.frozen = false;
@@ -208,7 +206,6 @@ jcmp.ui.AddEvent('KeyPress', (key) => {
         else
         {
             jcmp.events.CallRemote('BeginSpectate');
-            jcmp.print("BEGIN SPECTATE");
         }
     }
     else if (key == 32 && spectating && can_spec) // key 32 is space
@@ -220,19 +217,29 @@ jcmp.ui.AddEvent('KeyPress', (key) => {
 function GetNewSpectatingPlayer()
 {
     let players = jcmp.players.filter(p => p.networkId != jcmp.localPlayer.networkId);
-    spectating_index = Math.floor(Math.random() * players.length);
-    jcmp.print(`got new spectating index ${spectating_index} with length ${players.length}`);
-    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[spectating_index].networkId);
-    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[spectating_index].name);
-    return players[spectating_index];
+    if (players.length == 0)
+    {
+        return null;
+    }
+    index = Math.floor(Math.random() * players.length);
+    //jcmp.print(`got new spectating index ${spectating_index} with length ${players.length}`);
+    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[index].networkId);
+    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[index].name);
+    for (let i = 0; i < jcmp.players.length; i++)
+    {
+        if (players[index].networkId == jcmp.players[i].networkId)
+        {
+            spectating_index = i;
+        }
+    }
+    return players[index];
 }
 
 function GetNextSpectatingPlayer()
 {
-    index = (spectating_index + 1 > jcmp.players.length - 1) ? 0 : spectating_index + 1;
-    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[spectating_index].networkId);
-    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[spectating_index].name);
-    if (typeof jcmp.players[index] == 'undefined')
+    /*spectating_index = (spectating_index + 1 > jcmp.players.length - 1) ? 0 : spectating_index + 1;
+
+    if (typeof jcmp.players[spectating_index] == 'undefined')
     {
         //return GetNextSpectatingPlayer();
         return null; // Not going full out on the recursion just yet
@@ -242,7 +249,11 @@ function GetNextSpectatingPlayer()
     {
         return GetNextSpectatingPlayer(); // This should only recurse once ... if it does more than that, it's gon b bad
     }
-    return players[Math.floor(Math.random() * players.length)];
+
+    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, jcmp.players[spectating_index].networkId);
+    jcmp.ui.CallEvent('deathmatch/updatespectatingname', jcmp.players[spectating_index].name);
+    return jcmp.players[spectating_index];*/
+    return GetNewSpectatingPlayer();
 }
 
 jcmp.events.AddRemoteCallable('EndGame', () => {
@@ -279,6 +290,33 @@ jcmp.events.AddRemoteCallable('NonIntegratedUI', () => {
     integrated_ui = false;
     ui.hidden = false;
     ResetCamera();
+})
+
+jcmp.events.AddRemoteCallable('EndSpectate', () => {
+    spectating = false;
+    spectating_player = null;
+    jcmp.localPlayer.frozen = false;
+    if (!integrated_ui)
+    {
+        ui.hidden = false;
+        ResetCamera();
+    }
+    else
+    {
+        jcmp.localPlayer.camera.attachedToPlayer = true;
+    }
+    ingame_ui.hidden = true;
+    leavingmsg.hidden = true;
+    countdown_sound = false;
+    timer_ui.hidden = true;
+    shrink_border = false;
+    countdown.hidden = true;
+    health_ui.hidden = true;
+    spectate_ui.hidden = true;
+    //leaving_field_time = leaving_field_default_time; // Eventually calculate if spectated player is out of bounds
+    jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+    jcmp.world.weather = 0;
 })
 
 jcmp.events.AddRemoteCallable('FadeInCountdown', () => {
@@ -398,6 +436,26 @@ jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
         jcmp.localPlayer.SetAbilityEnabled(0xE060F641, defaults.wings_enabled);
     }
     jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+
+    if (spectating)
+    {
+        spectating = false;
+        spectating_player = null;
+        jcmp.localPlayer.camera.attachedToPlayer = true;
+        ingame_ui.hidden = true;
+        leavingmsg.hidden = true;
+        countdown_sound = false;
+        timer_ui.hidden = true;
+        shrink_border = false;
+        countdown.hidden = false;
+        countdownTime = 0;
+        jcmp.ui.CallEvent('deathmatch/fadeincountdown');
+        health_ui.hidden = true;
+        spectate_ui.hidden = true;
+        jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+        jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+    }
+
     //jcmp.world.SetTime(defaults.time.hour, defaults.time.minutes);
 })
 
@@ -438,7 +496,7 @@ jcmp.events.AddRemoteCallable('SteamAvatarURLUpdate', (data) => {
     steam_urls = JSON.parse(data);
     steam_urls.forEach(function(profile) {
         if ((profile.id == jcmp.localPlayer.networkId && !spectating) || 
-        (spectating && typeof spectating_player != 'undefined' && spectating_player.networkId == profile.id))
+        (spectating && typeof spectating_player != 'undefined' && spectating_player != null && spectating_player.networkId == profile.id))
         {
             profile.localplayer = true;
         }
@@ -491,7 +549,7 @@ jcmp.events.Add("GameUpdateRender", (renderer) => {
     {
         return;
     }
-    if (spectating && spectating_player != null)
+    if (spectating && spectating_player != null && typeof spectating_player != 'undefined')
     {
         SpectateCamera(spectating_player, renderer);
     }
@@ -554,7 +612,10 @@ function RenderWeapons(r)
             let matrix = new Matrix().Translate(pos);
             matrix = matrix.LookAt(pos, cam_pos, up);
             r.SetTransform(matrix);
-            r.DrawTexture(weapon_icons[weapon.type].texture, w_translate, new Vector2f(size,size));
+            if (weapon_icons[weapon.type].texture)
+            {
+                r.DrawTexture(weapon_icons[weapon.type].texture, w_translate, new Vector2f(size,size));
+            }
             
             let dist = Distance(player_pos, pos);
             if (dist < pickup_dist && !spectating)
@@ -608,8 +669,9 @@ function GetWeaponIndex(spawn)
 
 function lerp(a,b,t)
 {
+    return (a.add( ( b.sub(a) ).mul(new Vector3f(t,t,t)) ));
     //return a.add(b.sub(a).mul(t));
-    return b;
+    //return b;
 }
 
 

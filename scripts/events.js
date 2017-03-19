@@ -96,6 +96,12 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
 
     dm.avatars = dm.avatars.filter(data => data.id != player.networkId);
     jcmp.events.CallRemote('RemoveSteamAvatar', null, player.networkId);
+
+    if (dm.game.current_game != null)
+    {
+        dm.game.current_game.spectators = dm.game.current_game.spectators.filter(id => id != player.networkId);
+    }
+    
 })
 
 // Chat event
@@ -181,4 +187,8 @@ jcmp.events.AddRemoteCallable('EndSpectate', (player) => {
     console.log("END SPECTATE");
     player.position = player.dms.position;
     player.dimension = player.dms.dimension;
+    if (dm.game.current_game != null)
+    {
+        dm.game.current_game.spectators = dm.game.current_game.spectators.filter(id => id != player.networkId);
+    }
 })
