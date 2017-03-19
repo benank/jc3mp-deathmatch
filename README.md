@@ -20,14 +20,13 @@ set `integrated_mode` to true.
 ### Known Issues
 
 - Players will retain their weapons through matches. This will be fixed when JC3MP 0.9.9 is released.
- - Currently there is a hacky solution where everyone starts with weapons that have 0 ammo.
-- Spectating:
- - Health avatar is same as LocalPlayer
- - Usually does not work if you were not in the actual game and died. This will be fixed when JC3MP 0.9.9 is released.
- - It's super janky and jagged. Smoothing will be implemented soontm.
- - Spectating does not end when a game ends and bugs out UI for next game.
- - Pressing space does not switch spectated player.
- - Death sound is super loud.
+- Currently there is a hacky solution where everyone starts with weapons that have 0 ammo.
+- Spectator: Health avatar is same as LocalPlayer
+- Spectator: Usually does not work if you were not in the actual game and died. This will be fixed when JC3MP 0.9.9 is released.
+- Spectator: Movement is super janky and jagged. Smoothing will be implemented soontm.
+- Spectator: Spectating does not end when a game ends and bugs out UI for next game.
+- Spectator: Pressing space does not switch spectated player.
+- Spectator: Death sound is super loud.
 - Sometimes weapon spawns do not appear.
 
  
