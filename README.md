@@ -19,11 +19,12 @@ set `integrated_mode` to true.
 
 ### Known Issues
 
-- Players will retain their weapons through matches. This will be fixed when JC3MP 0.9.9 is released.
+- Players will retain their weapons through matches. Will be fixed when JC3MP 0.9.9 is released.
 - Currently there is a hacky solution where everyone starts with weapons that have 0 ammo.
 - Spectator: Health avatar is same as LocalPlayer
 - Spectator: Pressing space does not switch spectated player.
 - Spectator: Death sound is super loud.
+- Spectator: Does not work at all if player was not in the game previously. Will be fixed in JC3MP 0.9.9.
 - Sometimes weapon spawns do not appear.
 
  
