@@ -8,6 +8,16 @@ Simple arena-based deathmatch
 3. Edit the rest of `config.js` as necessary. If you want to run it as a gamemode on a freeroam, 
 set `integrated_mode` to true.
 
+### Gameplay
+ - Players are spawned randomly in an arena without any weapons.
+ - Players must find weapons (they look like white circles with images in them) hidden in the arena.
+ - Once a player dies, they are out of the round.
+ - Weapons have different respawn times.
+ - Game ends when there is one player remaining.
+ - After the timer elapses, it resets to two minutes and the borders restrict gameplay to a small area in the center.
+ - A new game begins only when the current one ends.
+ - Each weapon spawn contains a random weapon of that type (ex. pistol spawns contain random types of pistols).
+
 ### Additional Notes
 
 - Supported weathers for arenas: base, rain, overcast, thunderstorm, fog, snow, and random.
