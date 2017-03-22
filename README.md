@@ -17,6 +17,7 @@ set `integrated_mode` to true.
  - After the timer elapses, it resets to two minutes and the borders restrict gameplay to a small area in the center.
  - A new game begins only when the current one ends.
  - Each weapon spawn contains a random weapon of that type (ex. pistol spawns contain random types of pistols).
+ - All arenas restrict use of wingsuit and most restrict use of parachute. This is to keep gameplay fun by limiting mobility. These settings can be adjusted in individual arena settings.
 
 ### Additional Notes
 
