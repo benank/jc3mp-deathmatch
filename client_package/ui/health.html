@@ -42,7 +42,7 @@
     let myUrl;
     let spectating = false;
 
-    jcmp.AddEvent('deathmatch/updatehealthui', (num) => {
+    jcmp.AddEvent('dm/updatehealthui', (num) => {
         num = Math.round(num * 100);
         num = (num > 0) ? num : 0;
         let hp_gray = (100 - num) + "%";
@@ -51,7 +51,7 @@
         $("div").text(hp);
     })
     
-    jcmp.AddEvent('deathmatch/updatesteamavatars', (steam_urls) => {
+    jcmp.AddEvent('dm/updatesteamavatars', (steam_urls) => {
         let steamdata = JSON.parse(steam_urls);
         steamdata.forEach(function(profile) 
         {
@@ -63,7 +63,7 @@
         $("img").attr("src", myUrl);
     })
 
-    jcmp.AddEvent('deathmatch/changehealthspectateavatar', (steam_urls, id) => {
+    jcmp.AddEvent('dm/changehealthspectateavatar', (steam_urls, id) => {
         let steamdata = JSON.parse(steam_urls);
         steamdata.forEach(function(profile) 
         {
@@ -74,7 +74,7 @@
         });
     })
 
-    jcmp.AddEvent('deathmatch/updatehealthspectating', (spec) => {
+    jcmp.AddEvent('dm/updatehealthspectating', (spec) => {
         spectating = spec;
     })
 

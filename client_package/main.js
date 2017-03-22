@@ -95,20 +95,20 @@ jcmp.ui.AddEvent('SecondTick', () => {
     {
         if (!countdown_sound)
         {
-            jcmp.ui.CallEvent('deathmatch/startcountdownsound');
+            jcmp.ui.CallEvent('dm/startcountdownsound');
             countdown_sound = true;
         }
         else
         {
             countdownTime--;
         }
-        jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', countdownTime);
+        jcmp.ui.CallEvent('dm/updategamestartcountdown', countdownTime);
         if (countdownTime == 0)
         {
             jcmp.localPlayer.controlsEnabled = true;
-            jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', "GO!");
+            jcmp.ui.CallEvent('dm/updategamestartcountdown', "GO!");
             ingame_ui.hidden = false;
-            jcmp.ui.CallEvent('deathmatch/setingametime', defaults.max_time);
+            jcmp.ui.CallEvent('dm/setingametime', defaults.max_time);
             timer_ui.hidden = false;
             health_ui.hidden = false;
         }
@@ -129,11 +129,11 @@ jcmp.ui.AddEvent('SecondTick', () => {
         if (leaving_field && ingame && countdownTime == 0)
         {
             leaving_field_time = (leaving_field_time > 0) ? leaving_field_time - 1 : 0;
-            jcmp.ui.CallEvent('deathmatch/updateleavingfield', leaving_field_time);
+            jcmp.ui.CallEvent('dm/updateleavingfield', leaving_field_time);
             leavingmsg.hidden = false;
             if (leaving_field_time == 0)
             {
-                jcmp.events.CallRemote('deathmatch/killfromleavingfield');
+                jcmp.events.CallRemote('dm/killfromleavingfield');
             }
         }
         else
@@ -153,11 +153,11 @@ jcmp.ui.AddEvent('SecondTick', () => {
                 near_weapons.push(spawn);
             }
         });
-        jcmp.ui.CallEvent('deathmatch/decreaseingametime'); // Decrease time for those ingame
+        jcmp.ui.CallEvent('dm/decreaseingametime'); // Decrease time for those ingame
     }
     if (num_ingame >= 1 && !ingame)
     {
-        jcmp.ui.CallEvent('deathmatch/decreaseingametime'); // Decrease time for those out of game in non-integrated mode
+        jcmp.ui.CallEvent('dm/decreaseingametime'); // Decrease time for those out of game in non-integrated mode
     }
     if (spectating && (spectating_player == null || typeof spectating_player == 'undefined'))
     {
@@ -198,14 +198,14 @@ jcmp.ui.AddEvent('KeyPress', (key) => {
             health_ui.hidden = true;
             spectate_ui.hidden = true;
             //leaving_field_time = leaving_field_default_time; // Eventually calculate if spectated player is out of bounds
-            jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
-            jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+            jcmp.ui.CallEvent('dm/changebordercolor', "white");
+            jcmp.ui.CallEvent('dm/updatehealthspectating', false);
             jcmp.world.weather = 0;
-            jcmp.events.CallRemote('EndSpectate');
+            jcmp.events.CallRemote('dm/EndSpectate');
         }
         else
         {
-            jcmp.events.CallRemote('BeginSpectate');
+            jcmp.events.CallRemote('dm/BeginSpectate');
         }
     }
     else if (key == 32 && spectating && can_spec) // key 32 is space
@@ -223,8 +223,8 @@ function GetNewSpectatingPlayer()
     }
     index = Math.floor(Math.random() * players.length);
     //jcmp.print(`got new spectating index ${spectating_index} with length ${players.length}`);
-    jcmp.ui.CallEvent('deathmatch/changehealthspectateavatar', steam_urls, players[index].networkId);
-    jcmp.ui.CallEvent('deathmatch/updatespectatingname', players[index].name);
+    jcmp.ui.CallEvent('dm/changehealthspectateavatar', steam_urls, players[index].networkId);
+    jcmp.ui.CallEvent('dm/updatespectatingname', players[index].name);
     for (let i = 0; i < jcmp.players.length; i++)
     {
         if (players[index].networkId == jcmp.players[i].networkId)
@@ -256,7 +256,7 @@ function GetNextSpectatingPlayer()
     return GetNewSpectatingPlayer();
 }
 
-jcmp.events.AddRemoteCallable('EndGame', () => {
+jcmp.events.AddRemoteCallable('dm/EndGame', () => {
     ingame = false;
     if (!integrated_ui)
     {
@@ -271,9 +271,9 @@ jcmp.events.AddRemoteCallable('EndGame', () => {
     countdown.hidden = true;
     health_ui.hidden = true;
     leaving_field_time = leaving_field_default_time;
-    jcmp.ui.CallEvent('ResetCountdownCSS');
-    jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
-    jcmp.events.Call('EndDeathmatchRound');
+    jcmp.ui.CallEvent('dm/ResetCountdownCSS');
+    jcmp.ui.CallEvent('dm/changebordercolor', "white");
+    jcmp.events.Call('dm/EndDeathmatchRound');
     jcmp.world.weather = 0;
 
     // Reset grapple, para, and wings abilities in case of freeroam
@@ -282,17 +282,17 @@ jcmp.events.AddRemoteCallable('EndGame', () => {
     jcmp.localPlayer.SetAbilityEnabled(0xE060F641, true);
 })
 
-jcmp.events.AddRemoteCallable('OverrideUtility', () => {
+jcmp.events.AddRemoteCallable('dm/OverrideUtility', () => {
     override_utility = true;
 })
 
-jcmp.events.AddRemoteCallable('NonIntegratedUI', () => {
+jcmp.events.AddRemoteCallable('dm/NonIntegratedUI', () => {
     integrated_ui = false;
     ui.hidden = false;
     ResetCamera();
 })
 
-jcmp.events.AddRemoteCallable('EndSpectate', () => {
+jcmp.events.AddRemoteCallable('dm/EndSpectate', () => {
     spectating = false;
     spectating_player = null;
     jcmp.localPlayer.frozen = false;
@@ -314,59 +314,59 @@ jcmp.events.AddRemoteCallable('EndSpectate', () => {
     health_ui.hidden = true;
     spectate_ui.hidden = true;
     //leaving_field_time = leaving_field_default_time; // Eventually calculate if spectated player is out of bounds
-    jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
-    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+    jcmp.ui.CallEvent('dm/changebordercolor', "white");
+    jcmp.ui.CallEvent('dm/updatehealthspectating', false);
     jcmp.world.weather = 0;
 })
 
-jcmp.events.AddRemoteCallable('FadeInCountdown', () => {
+jcmp.events.AddRemoteCallable('dm/FadeInCountdown', () => {
     countdown.hidden = false;
     countdownTime = 0;
-    jcmp.ui.CallEvent('deathmatch/fadeincountdown');
+    jcmp.ui.CallEvent('dm/fadeincountdown');
 })
 
-jcmp.events.AddRemoteCallable('SyncOnlinePlayers', (num, needed) => {
+jcmp.events.AddRemoteCallable('dm/SyncOnlinePlayers', (num, needed) => {
     num_players = num;
-    jcmp.ui.CallEvent('NumPlayers', num_players, needed);
+    jcmp.ui.CallEvent('dm/NumPlayers', num_players, needed);
 })
 
-jcmp.events.AddRemoteCallable('BorderShrinkSpectator', (time) => {
-    jcmp.ui.CallEvent('deathmatch/setingametime', time);
-    jcmp.ui.CallEvent('deathmatch/changebordercolor', "red");
+jcmp.events.AddRemoteCallable('dm/BorderShrinkSpectator', (time) => {
+    jcmp.ui.CallEvent('dm/setingametime', time);
+    jcmp.ui.CallEvent('dm/changebordercolor', "red");
 })
 
-jcmp.events.AddRemoteCallable('BorderShrink', (size, time) => {
-    jcmp.ui.CallEvent('deathmatch/setingametime', time);
-    jcmp.ui.CallEvent('deathmatch/changebordercolor', "red");
+jcmp.events.AddRemoteCallable('dm/BorderShrink', (size, time) => {
+    jcmp.ui.CallEvent('dm/setingametime', time);
+    jcmp.ui.CallEvent('dm/changebordercolor', "red");
     shrink_border = true;
     shrink_size = size;
 })
 
-jcmp.events.AddRemoteCallable('ShowDeathScreen', (num, tied) => {
-    jcmp.ui.CallEvent('deathmatch/localplayerdead', num, tied);
+jcmp.events.AddRemoteCallable('dm/ShowDeathScreen', (num, tied) => {
+    jcmp.ui.CallEvent('dm/localplayerdead', num, tied);
     death_ui.hidden = false;
-    jcmp.events.Call('PlayerDiedDeathmatch');
+    jcmp.events.Call('dm/PlayerDiedDeathmatch');
     ingame = false;
     countdown.hidden = true;
     health_ui.hidden = true;
     countdownTime = 0;
     countdown_sound = false;
-    jcmp.ui.CallEvent('CleanupIngameUI');
+    jcmp.ui.CallEvent('dm/CleanupIngameUI');
 })
 
-jcmp.events.AddRemoteCallable('CleanupIngameUI', () => {
-    jcmp.ui.CallEvent('CleanupIngameUI');
+jcmp.events.AddRemoteCallable('dm/CleanupIngameUI', () => {
+    jcmp.ui.CallEvent('dm/CleanupIngameUI');
     ingame = false;
     countdownTime = 0;
     countdown_sound = false;
 })
 
-jcmp.events.AddRemoteCallable('SyncPlayersIngame', (num) => {
+jcmp.events.AddRemoteCallable('dm/SyncPlayersIngame', (num) => {
     num_ingame = num;
-    jcmp.ui.CallEvent('NumPlayersIngame', num_ingame);
+    jcmp.ui.CallEvent('dm/NumPlayersIngame', num_ingame);
 })
 
-jcmp.events.AddRemoteCallable('ChangeArena', (data) => {
+jcmp.events.AddRemoteCallable('dm/ChangeArena', (data) => {
     data = JSON.parse(data);
     camera_position = new Vector3f(data.x, data.y + 650, data.z);
     if (!integrated_ui)
@@ -386,7 +386,7 @@ function ResetCamera()
 
 
 
-jcmp.events.AddRemoteCallable('BeginSpectate', (d, w) => {
+jcmp.events.AddRemoteCallable('dm/BeginSpectate', (d, w) => {
     defaults = JSON.parse(d);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
     diameter = new Vector2f(defaults.diameter, defaults.diameter);
@@ -395,7 +395,7 @@ jcmp.events.AddRemoteCallable('BeginSpectate', (d, w) => {
         jcmp.world.weather = weathers.indexOf(defaults.weather);
     }
     m = CreateNewBorderMatrix();
-    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', true);
+    jcmp.ui.CallEvent('dm/updatehealthspectating', true);
     jcmp.localPlayer.frozen = true;
     weaponSpawns = [];
     near_weapons = [];
@@ -409,7 +409,7 @@ jcmp.events.AddRemoteCallable('BeginSpectate', (d, w) => {
     ui.hidden = true;
 })
 
-jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
+jcmp.events.AddRemoteCallable('dm/InitializeDefaults', (data) => {
     defaults = JSON.parse(data);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
     diameter = new Vector2f(defaults.diameter, defaults.diameter);
@@ -418,7 +418,7 @@ jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
         jcmp.world.weather = weathers.indexOf(defaults.weather);
     }
     m = CreateNewBorderMatrix();
-    jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+    jcmp.ui.CallEvent('dm/updatehealthspectating', false);
 
     if (override_utility)
     {
@@ -435,7 +435,7 @@ jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
         jcmp.localPlayer.SetAbilityEnabled(0xCEEFA27A, defaults.para_enabled);
         jcmp.localPlayer.SetAbilityEnabled(0xE060F641, defaults.wings_enabled);
     }
-    jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
+    jcmp.ui.CallEvent('dm/changebordercolor', "white");
 
     if (spectating)
     {
@@ -449,33 +449,33 @@ jcmp.events.AddRemoteCallable('InitializeDefaults', (data) => {
         shrink_border = false;
         countdown.hidden = false;
         countdownTime = 0;
-        jcmp.ui.CallEvent('deathmatch/fadeincountdown');
+        jcmp.ui.CallEvent('dm/fadeincountdown');
         health_ui.hidden = true;
         spectate_ui.hidden = true;
-        jcmp.ui.CallEvent('deathmatch/changebordercolor', "white");
-        jcmp.ui.CallEvent('deathmatch/updatehealthspectating', false);
+        jcmp.ui.CallEvent('dm/changebordercolor', "white");
+        jcmp.ui.CallEvent('dm/updatehealthspectating', false);
     }
 
     //jcmp.world.SetTime(defaults.time.hour, defaults.time.minutes);
 })
 
-jcmp.events.AddRemoteCallable('InitializeWeaponSpawns', (data) => {
+jcmp.events.AddRemoteCallable('dm/InitializeWeaponSpawns', (data) => {
     weaponSpawns = [];
     near_weapons = [];
     weaponSpawns = JSON.parse(data);
 })
 
-jcmp.events.AddRemoteCallable('WeaponTake', (index) => {
+jcmp.events.AddRemoteCallable('dm/WeaponTake', (index) => {
     weaponSpawns[index].disabled = true;
 })
 
-jcmp.events.AddRemoteCallable('WeaponRespawn', (index) => {
+jcmp.events.AddRemoteCallable('dm/WeaponRespawn', (index) => {
     weaponSpawns[index].disabled = false;
 })
 
-jcmp.events.AddRemoteCallable('CountDownStart', (time) => {
+jcmp.events.AddRemoteCallable('dm/CountDownStart', (time) => {
     countdownTime = time;
-    jcmp.ui.CallEvent('deathmatch/updategamestartcountdown', countdownTime);
+    jcmp.ui.CallEvent('dm/updategamestartcountdown', countdownTime);
     jcmp.localPlayer.camera.attachedToPlayer = true;
     jcmp.localPlayer.frozen = false;
     jcmp.localPlayer.controlsEnabled = false;
@@ -484,15 +484,15 @@ jcmp.events.AddRemoteCallable('CountDownStart', (time) => {
     death_ui.hidden = true;
 })
 
-jcmp.events.AddRemoteCallable('SyncIngameTime', (time, showdown) => {
-    jcmp.ui.CallEvent('deathmatch/setingametime', time);
+jcmp.events.AddRemoteCallable('dm/SyncIngameTime', (time, showdown) => {
+    jcmp.ui.CallEvent('dm/setingametime', time);
     if (showdown)
     {
-        jcmp.ui.CallEvent('deathmatch/changebordercolor', "red");
+        jcmp.ui.CallEvent('dm/changebordercolor', "red");
     }
 })
 
-jcmp.events.AddRemoteCallable('SteamAvatarURLUpdate', (data) => {
+jcmp.events.AddRemoteCallable('dm/SteamAvatarURLUpdate', (data) => {
     steam_urls = JSON.parse(data);
     steam_urls.forEach(function(profile) {
         if ((profile.id == jcmp.localPlayer.networkId && !spectating) || 
@@ -501,44 +501,44 @@ jcmp.events.AddRemoteCallable('SteamAvatarURLUpdate', (data) => {
             profile.localplayer = true;
         }
     });
-    jcmp.ui.CallEvent('deathmatch/updatesteamavatars', JSON.stringify(steam_urls));
+    jcmp.ui.CallEvent('dm/updatesteamavatars', JSON.stringify(steam_urls));
 })
 
-jcmp.events.AddRemoteCallable('SpectatingAvatarsUpdate', (avatars) => {
+jcmp.events.AddRemoteCallable('dm/SpectatingAvatarsUpdate', (avatars) => {
     let data = JSON.parse(avatars);
     data.forEach(function(id) {
-        jcmp.ui.CallEvent('deathmatch/playerdied', id); // Update dead avatars for spectators
+        jcmp.ui.CallEvent('dm/playerdied', id); // Update dead avatars for spectators
     });
 })
 
-jcmp.events.AddRemoteCallable('PlayerDiedDeathmatch', (id) => {
-    jcmp.ui.CallEvent('deathmatch/playerdied', id);
-    jcmp.ui.CallEvent('deathmatch/cannonsound');
+jcmp.events.AddRemoteCallable('dm/PlayerDiedDeathmatch', (id) => {
+    jcmp.ui.CallEvent('dm/playerdied', id);
+    jcmp.ui.CallEvent('dm/cannonsound');
     if (spectating && spectating_player.networkId == id)
     {
         spectating_player = GetNewSpectatingPlayer();
     }
 })
 
-jcmp.events.AddRemoteCallable('RemoveSteamAvatar', (id) => {
+jcmp.events.AddRemoteCallable('dm/RemoveSteamAvatar', (id) => {
     steam_urls = steam_urls.filter(p => p.id != id);
-    jcmp.ui.CallEvent('deathmatch/updatesteamavatars', JSON.stringify(steam_urls));
+    jcmp.ui.CallEvent('dm/updatesteamavatars', JSON.stringify(steam_urls));
 })
 
-jcmp.ui.AddEvent('deathmatch/hidecountdown', () => {
+jcmp.ui.AddEvent('dm/hidecountdown', () => {
     countdown.hidden = true;
 })
 
-jcmp.ui.AddEvent('MainUILoaded', () => {
+jcmp.ui.AddEvent('dm/MainUILoaded', () => {
     jcmp.events.Call('Verify');
 })
 
 jcmp.events.Add('GameTeleportInitiated', () => {
-    jcmp.events.CallRemote('GameTeleportInitiated');
+    jcmp.events.CallRemote('dm/GameTeleportInitiated');
 })
 
 jcmp.events.Add('GameTeleportCompleted', () => {
-    jcmp.events.CallRemote('GameTeleportCompleted');
+    jcmp.events.CallRemote('dm/GameTeleportCompleted');
 })
 
 
@@ -578,11 +578,11 @@ jcmp.events.Add("GameUpdateRender", (renderer) => {
     }
     if (typeof localplayer != undefined && !spectating)
     {
-        jcmp.ui.CallEvent('deathmatch/updatehealthui', (localplayer.health / localplayer.maxHealth));
+        jcmp.ui.CallEvent('dm/updatehealthui', (localplayer.health / localplayer.maxHealth));
     }
     else if (spectating && typeof spectating_player != 'undefined' && spectating_player != null)
     {
-        jcmp.ui.CallEvent('deathmatch/updatehealthui', (spectating_player.health / spectating_player.maxHealth));
+        jcmp.ui.CallEvent('dm/updatehealthui', (spectating_player.health / spectating_player.maxHealth));
     }
 });
 
@@ -621,8 +621,8 @@ function RenderWeapons(r)
             if (dist < pickup_dist && !spectating)
             {
                 let index = GetWeaponIndex(spawn);
-                jcmp.events.CallRemote('PickupWeapon', index);
-                jcmp.ui.CallEvent('deathmatch/pickupweaponsound');
+                jcmp.events.CallRemote('dm/PickupWeapon', index);
+                jcmp.ui.CallEvent('dm/pickupweaponsound');
                 weaponSpawns[index].disabled = true;
             }
         }

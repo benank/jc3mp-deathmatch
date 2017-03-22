@@ -20,14 +20,14 @@
 
     let ingame_time = 0;
 
-    jcmp.AddEvent('deathmatch/decreaseingametime', () => 
+    jcmp.AddEvent('dm/decreaseingametime', () => 
     {
         ingame_time -= 1;
         ingame_time = (ingame_time < 0) ? 0 : ingame_time;
         UpdateTime();
     });
 
-    jcmp.AddEvent('deathmatch/setingametime', (num) => 
+    jcmp.AddEvent('dm/setingametime', (num) => 
     {
         ingame_time = num;
         UpdateTime();
@@ -44,7 +44,7 @@
         $("div").text(`${minutes}:${seconds}`);
     }
     
-    jcmp.AddEvent('deathmatch/changebordercolor', (color) => {
+    jcmp.AddEvent('dm/changebordercolor', (color) => {
         $("div").css("color", color);
     })
 

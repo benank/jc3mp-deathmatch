@@ -18,7 +18,9 @@ jcmp.events.Add('PlayerCreated', (player) =>
     player.dm = [];
 })
 
-jcmp.events.Add('PlayerReady', (player) => 
+// PlayerVerified is a custom event from verifier that waits for certain modules to load completely
+// PlayerReady is default substitute
+jcmp.events.Add('PlayerVerified', (player) => 
 {
     if (!dm.config.integrated_mode)
     {
@@ -29,8 +31,8 @@ jcmp.events.Add('PlayerReady', (player) =>
         
         if (dm.game.current_game != null)
         {
-            jcmp.events.CallRemote('SyncPlayersIngame', player, dm.game.current_game.players.length);
-            jcmp.events.CallRemote('SyncIngameTime', player, dm.game.current_game.current_time, dm.game.current_game.showdown_mode);
+            jcmp.events.CallRemote('dm/SyncPlayersIngame', player, dm.game.current_game.players.length);
+            jcmp.events.CallRemote('dm/SyncIngameTime', player, dm.game.current_game.current_time, dm.game.current_game.showdown_mode);
         }
         
         player.ready = true;
@@ -38,20 +40,20 @@ jcmp.events.Add('PlayerReady', (player) =>
         player.invulnerable = true;
         player.dimension = 1;
         player.position = new Vector3f(3891.033203125, 1557.2899169921875, 687.85791015625);
-        jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
+        jcmp.events.CallRemote('dm/SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
         if (dm.config.chat_settings.on_join_leave)
         {
             console.log(`${player.name} joined.`);
             lang.broadcast(lang.formatMessage(lang.msgs.on_s_join, {name: player.name}));
         }
-        jcmp.events.CallRemote('ChangeArena', player, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
-        jcmp.events.CallRemote('NonIntegratedUI', player);
+        jcmp.events.CallRemote('dm/ChangeArena', player, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
+        jcmp.events.CallRemote('dm/NonIntegratedUI', player);
         gm.AddPlayerToLobby(player);
     }
 
     if (dm.config.testing_settings.override_utility && dm.config.testing_settings.enabled)
     {
-        jcmp.events.CallRemote('OverrideUtility', player);
+        jcmp.events.CallRemote('dm/OverrideUtility', player);
     }
     steam.UpdateSteamImages(player);
 
@@ -77,7 +79,7 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
         }
         setTimeout(function() 
         {
-            jcmp.events.CallRemote('SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
+            jcmp.events.CallRemote('dm/SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
         }, 1000);
     }
     
@@ -95,7 +97,7 @@ jcmp.events.Add('PlayerDestroyed', (player) =>
     }
 
     dm.avatars = dm.avatars.filter(data => data.id != player.networkId);
-    jcmp.events.CallRemote('RemoveSteamAvatar', null, player.networkId);
+    jcmp.events.CallRemote('dm/RemoveSteamAvatar', null, player.networkId);
 
     if (dm.game.current_game != null)
     {
@@ -127,7 +129,7 @@ jcmp.events.Add('chat_command', (player, message) =>
 
 // Deathmatch Events -----
 
-jcmp.events.Add('WeaponTimeoutRespawn', (index, respawn_time) => 
+jcmp.events.Add('dm/WeaponTimeoutRespawn', (index, respawn_time) => 
 {
     dm.game.current_game.timeouts.push(setTimeout(function() 
     {
@@ -138,7 +140,7 @@ jcmp.events.Add('WeaponTimeoutRespawn', (index, respawn_time) =>
     }, respawn_time));
 })
 
-jcmp.events.AddRemoteCallable('deathmatch/killfromleavingfield', (player) => 
+jcmp.events.AddRemoteCallable('dm/killfromleavingfield', (player) => 
 {
     if (dm.game.current_game != null)
     {
@@ -146,22 +148,22 @@ jcmp.events.AddRemoteCallable('deathmatch/killfromleavingfield', (player) =>
     }
 })
 
-jcmp.events.AddRemoteCallable('PickupWeapon', (player, index) => {
+jcmp.events.AddRemoteCallable('dm/PickupWeapon', (player, index) => {
     if (dm.game.current_game != null)
     {
         dm.game.current_game.pickup_weapon(player, index);
     }
 })
 
-jcmp.events.AddRemoteCallable('GameTeleportInitiated', (player) => {
+jcmp.events.AddRemoteCallable('dm/GameTeleportInitiated', (player) => {
     player.dm.teleporting = true;
 })
 
-jcmp.events.AddRemoteCallable('GameTeleportCompleted', (player) => {
+jcmp.events.AddRemoteCallable('dm/GameTeleportCompleted', (player) => {
     player.dm.teleporting = false;
 })
 
-jcmp.events.AddRemoteCallable('BeginSpectate', (player) => {
+jcmp.events.AddRemoteCallable('dm/BeginSpectate', (player) => {
     if (dm.game.current_game == null || !dm.game.current_game.active)
     {
         console.log("PLAYER SPECTATE FAILED");
@@ -170,7 +172,7 @@ jcmp.events.AddRemoteCallable('BeginSpectate', (player) => {
     }
     console.log("BEGIN PLAYER SPECTATE");
 
-    jcmp.events.CallRemote('BeginSpectate', player, JSON.stringify(dm.game.current_game.defaults), JSON.stringify(dm.game.current_game.weaponSpawnPoints));
+    jcmp.events.CallRemote('dm/BeginSpectate', player, JSON.stringify(dm.game.current_game.defaults), JSON.stringify(dm.game.current_game.weaponSpawnPoints));
     dm.game.current_game.spectators.push(player);
     let data = dm.game.current_game.defaults.centerPoint;
     player.position = new Vector3f(data.x, data.y, data.z);
@@ -179,11 +181,11 @@ jcmp.events.AddRemoteCallable('BeginSpectate', (player) => {
     player.dms.position = player.position;
     player.dms.dimension = player.dimension;
     player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
-    jcmp.events.CallRemote('SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
-    jcmp.events.CallRemote('SpectatingAvatarsUpdate', player, JSON.stringify(dm.game.current_game.dead));
+    jcmp.events.CallRemote('dm/SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
+    jcmp.events.CallRemote('dm/SpectatingAvatarsUpdate', player, JSON.stringify(dm.game.current_game.dead));
 })
 
-jcmp.events.AddRemoteCallable('EndSpectate', (player) => {
+jcmp.events.AddRemoteCallable('dm/EndSpectate', (player) => {
     console.log("END SPECTATE");
     player.position = player.dms.position;
     player.dimension = player.dms.dimension;

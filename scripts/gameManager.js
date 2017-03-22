@@ -35,7 +35,7 @@ function CheckGame()
                 {
                     dm.lobby.forEach(player =>
                     {
-                        jcmp.events.CallRemote('FadeInCountdown', player);
+                        jcmp.events.CallRemote('dm/FadeInCountdown', player);
                     });
                     
                     timer = setTimeout(function() 
@@ -54,8 +54,8 @@ function CheckGame()
                         {
                             dm.lobby.forEach(p => 
                             {
-                                jcmp.events.CallRemote('EndGame', p);
-                                jcmp.events.CallRemote('CleanupIngameUI', p);
+                                jcmp.events.CallRemote('dm/EndGame', p);
+                                jcmp.events.CallRemote('dm/CleanupIngameUI', p);
                             });
                         }
 
@@ -141,7 +141,7 @@ function EndGame()
     dm.game.current_game.end();
     dm.game.current_game = null;
     dm.game.current_arena = dm.game.arenas[Math.floor(Math.random() * dm.game.arenas.length)];
-    jcmp.events.CallRemote('ChangeArena', null, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
+    jcmp.events.CallRemote('dm/ChangeArena', null, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
 }
 
 function IntegratedBroadcast()

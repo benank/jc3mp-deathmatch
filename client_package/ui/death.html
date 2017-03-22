@@ -36,7 +36,7 @@
     <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
     <script>
 
-    jcmp.AddEvent('deathmatch/localplayerdead', (num, tied) => 
+    jcmp.AddEvent('dm/localplayerdead', (num, tied) => 
     {
         if (num < 1) {num = 1;} // In case something screws up and gives us 0th place or worse
         let suffix = "th";

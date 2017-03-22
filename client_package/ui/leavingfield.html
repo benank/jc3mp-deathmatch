@@ -17,7 +17,7 @@
     <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
     <script>
 
-    jcmp.AddEvent('deathmatch/updateleavingfield', (num) => {
+    jcmp.AddEvent('dm/updateleavingfield', (num) => {
         $("body").html(`Warning! You are leaving the battlefield!<br><br>You will be killed if you do not return in ${num} seconds.`);
     })
 

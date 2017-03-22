@@ -4,16 +4,16 @@ $(document).ready(function() {
     let num_ingame = 0;
     let min_players = 2;
 
-    jcmp.CallEvent('MainUILoaded');
+    jcmp.CallEvent('dm/MainUILoaded');
 
-    jcmp.AddEvent('NumPlayers', (num, needed) => {
+    jcmp.AddEvent('dm/NumPlayers', (num, needed) => {
         num_players = num;
         min_players = needed;
         $("#numonline").text(num_players.toString());
         UpdateText();
     })
 
-    jcmp.AddEvent('NumPlayersIngame', (num) => {
+    jcmp.AddEvent('dm/NumPlayersIngame', (num) => {
         num_ingame = num;
         $("#numingame").text(num_ingame.toString());
         UpdateText();
@@ -48,14 +48,14 @@ $(document).ready(function() {
     
     let ingame_time = 0;
 
-    jcmp.AddEvent('deathmatch/decreaseingametime', () => 
+    jcmp.AddEvent('dm/decreaseingametime', () => 
     {
         ingame_time -= 1;
         ingame_time = (ingame_time < 0) ? 0 : ingame_time;
         UpdateText();
     });
 
-    jcmp.AddEvent('deathmatch/setingametime', (num) => 
+    jcmp.AddEvent('dm/setingametime', (num) => 
     {
         setTimeout(function() // Delay it slightly so that num_players can be set before
         {
@@ -76,11 +76,11 @@ $(document).ready(function() {
         $("div.playersinfo").text(`A game is currently in progress. Press X to spectate.`);
     }
 
-    jcmp.AddEvent('deathmatch/changebordercolor', (color) => {
+    jcmp.AddEvent('dm/changebordercolor', (color) => {
         $("div.playersinfo").css("color", color);
     })
 
-    jcmp.AddEvent('deathmatch/pickupweaponsound', () => {
+    jcmp.AddEvent('dm/pickupweaponsound', () => {
         var x = document.createElement("AUDIO");
         x.setAttribute("src","./music/pickup.ogg");
         x.volume = 0.25;

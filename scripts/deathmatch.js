@@ -33,8 +33,8 @@ class Deathmatch
         {
             player.dm.dimension = player.dimension;
             player.dm.position = player.position;
-            jcmp.events.CallRemote('InitializeDefaults', player, JSON.stringify(this.defaults));
-            jcmp.events.CallRemote('InitializeWeaponSpawns', player, JSON.stringify(this.weaponSpawnPoints));
+            jcmp.events.CallRemote('dm/InitializeDefaults', player, JSON.stringify(this.defaults));
+            jcmp.events.CallRemote('dm/InitializeWeaponSpawns', player, JSON.stringify(this.weaponSpawnPoints));
             let spawn_index = Math.round(Math.random() * (available_spawns.length - 1))
             let data;
             if (available_spawns.length == 0) // If we have run out of unique spawns, take random ones
@@ -52,7 +52,7 @@ class Deathmatch
             player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
 
             player.Respawn();
-            jcmp.events.CallRemote('SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
+            jcmp.events.CallRemote('dm/SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
             jcmp.events.Call('ChangeTime', this.defaults.time.minute, this.defaults.time.hour);
 
             // Hacky weapon "removal" until 0.9.9
@@ -68,7 +68,7 @@ class Deathmatch
 
         if (!dm.config.integrated_mode)
         {
-            jcmp.events.CallRemote('SyncPlayersIngame', null, this.players.length);
+            jcmp.events.CallRemote('dm/SyncPlayersIngame', null, this.players.length);
         }
     }
 
@@ -80,7 +80,7 @@ class Deathmatch
             player.invulnerable = false;
             // Set the player's dimension again because it might fix a rare bug where players dont see each other
             player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
-            jcmp.events.CallRemote('CountDownStart', player, 10);
+            jcmp.events.CallRemote('dm/CountDownStart', player, 10);
             let timeout = setTimeout(() =>
             {
                 player.position = player.respawnPosition; // Teleport them to their position again to make sure they dont freeze
@@ -114,7 +114,7 @@ class Deathmatch
         });
         if (!dm.config.integrated_mode)
         {
-            jcmp.events.CallRemote('SyncPlayersIngame', null, 0);
+            jcmp.events.CallRemote('dm/SyncPlayersIngame', null, 0);
         }
         this.active = false;
 
@@ -122,7 +122,7 @@ class Deathmatch
         {
             p.position = p.dms.position;
             p.dimension = p.dms.dimension;
-            jcmp.events.CallRemote('EndSpectate', p);
+            jcmp.events.CallRemote('dm/EndSpectate', p);
         });
 
     }
@@ -141,7 +141,7 @@ class Deathmatch
         this.broadcast_weap_take(index);
         this.weaponSpawnPoints[index].disabled = true;
         const respawn_time = weapon.respawn_time * 1000 * 60;
-        jcmp.events.Call('WeaponTimeoutRespawn', index, respawn_time);
+        jcmp.events.Call('dm/WeaponTimeoutRespawn', index, respawn_time);
 
     }
 
@@ -149,10 +149,10 @@ class Deathmatch
     {
         this.players.forEach(player =>
         {
-            jcmp.events.CallRemote('BorderShrink', player, this.defaults.diameter / 15, this.defaults.showdown_time);
+            jcmp.events.CallRemote('dm/BorderShrink', player, this.defaults.diameter / 15, this.defaults.showdown_time);
             this.lang.send(player, this.lang.formatMessage(this.lang.msgs.on_border_shrink, {}))
         });
-        jcmp.events.CallRemote('BorderShrinkSpectator', null, this.defaults.showdown_time);
+        jcmp.events.CallRemote('dm/BorderShrinkSpectator', null, this.defaults.showdown_time);
     }
     
     broadcast_weap_respawn(index)
@@ -160,12 +160,12 @@ class Deathmatch
         this.weaponSpawnPoints[index].disabled = false;
         this.players.forEach(player =>
         {
-            jcmp.events.CallRemote('WeaponRespawn', player, index);
+            jcmp.events.CallRemote('dm/WeaponRespawn', player, index);
         });
 
         this.spectators.forEach(player =>
         {
-            jcmp.events.CallRemote('WeaponRespawn', player, index);
+            jcmp.events.CallRemote('dm/WeaponRespawn', player, index);
         });
     }
 
@@ -173,21 +173,21 @@ class Deathmatch
     {
         this.players.forEach(player =>
         {
-            jcmp.events.CallRemote('WeaponTake', player, index);
+            jcmp.events.CallRemote('dm/WeaponTake', player, index);
         });
 
         this.spectators.forEach(player =>
         {
-            jcmp.events.CallRemote('WeaponTake', player, index);
+            jcmp.events.CallRemote('dm/WeaponTake', player, index);
         });
     }
 
     player_won(player)
     {
-        jcmp.events.CallRemote('ShowDeathScreen', player, 1, false);
+        jcmp.events.CallRemote('dm/ShowDeathScreen', player, 1, false);
         let timeout = setTimeout(() => 
         {
-            jcmp.events.CallRemote('EndGame', player);
+            jcmp.events.CallRemote('dm/EndGame', player);
             player.invulnerable = true;
             if (dm.config.integrated_mode)
             {
@@ -207,11 +207,11 @@ class Deathmatch
 
     player_died(player)
     {
-        jcmp.events.CallRemote('ShowDeathScreen', player, this.players.length, false);
+        jcmp.events.CallRemote('dm/ShowDeathScreen', player, this.players.length, false);
         this.remove_player(player);
         let timeout = setTimeout(() => 
         {
-            jcmp.events.CallRemote('EndGame', player);
+            jcmp.events.CallRemote('dm/EndGame', player);
             player.invulnerable = true;
             if (dm.config.integrated_mode)
             {
@@ -239,11 +239,11 @@ class Deathmatch
     player_tied(player)
     {
         player.invulnerable = true;
-        jcmp.events.CallRemote('ShowDeathScreen', player, 1, true);
+        jcmp.events.CallRemote('dm/ShowDeathScreen', player, 1, true);
         let timeout = setTimeout(() =>  
         {
-            jcmp.events.CallRemote('EndGame', player);
-            jcmp.events.CallRemote('CleanupIngameUI', player);
+            jcmp.events.CallRemote('dm/EndGame', player);
+            jcmp.events.CallRemote('dm/CleanupIngameUI', player);
             player.invulnerable = true;
             if (dm.config.integrated_mode)
             {
@@ -265,13 +265,13 @@ class Deathmatch
             this.dead.push(player.networkId);
             this.players.forEach(p => 
             {
-                jcmp.events.CallRemote('PlayerDiedDeathmatch', p, player.networkId);
+                jcmp.events.CallRemote('dm/PlayerDiedDeathmatch', p, player.networkId);
             });
 
             this.spectators.forEach(p => 
             {
                 // Spectators will automatically switch when a player dies if they are spectating them
-                jcmp.events.CallRemote('PlayerDiedDeathmatch', p, player.networkId);
+                jcmp.events.CallRemote('dm/PlayerDiedDeathmatch', p, player.networkId);
             });
         }
 
@@ -279,7 +279,7 @@ class Deathmatch
         this.players = this.players.filter(p => p.networkId != player.networkId);
         if (!dm.config.integrated_mode && typeof player_exists != 'undefined')
         {
-            jcmp.events.CallRemote('SyncPlayersIngame', null, this.players.length);
+            jcmp.events.CallRemote('dm/SyncPlayersIngame', null, this.players.length);
         }
     }
 

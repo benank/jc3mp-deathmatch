@@ -71,7 +71,7 @@
     </style>
     <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
     <script>
-    jcmp.AddEvent('deathmatch/updategamestartcountdown', (num) => 
+    jcmp.AddEvent('dm/updategamestartcountdown', (num) => 
     {
         $("#countdown").text(`${num}`);
         if (num == "GO!")
@@ -81,17 +81,17 @@
             setTimeout(function() 
             {
                 $("#countdown").removeClass("animation");
-                jcmp.CallEvent('deathmatch/hidecountdown');
+                jcmp.CallEvent('dm/hidecountdown');
             }, 5000);
         }
     });
-    jcmp.AddEvent('CleanupIngameUI', () => {
+    jcmp.AddEvent('dm/CleanupIngameUI', () => {
         countdownsound.pause();
         $("#loading").css("opacity", "0");
     })
     let countdownsound = null;
     
-    jcmp.AddEvent('deathmatch/startcountdownsound', () => 
+    jcmp.AddEvent('dm/startcountdownsound', () => 
     {
         $("#loading").css("opacity", "0");
         $("#countdown").css("color", "red");
@@ -107,7 +107,7 @@
         }
     
     });
-    jcmp.AddEvent('deathmatch/fadeincountdown', () => {
+    jcmp.AddEvent('dm/fadeincountdown', () => {
         $("#countdown").css("color", "transparent");
         $("#countdown").css("background-color", "transparent");
         $("#countdown").addClass("animation2");
@@ -118,7 +118,7 @@
         }, 1000);
     })
     
-    jcmp.AddEvent('ResetCountdownCSS', () => {
+    jcmp.AddEvent('dm/ResetCountdownCSS', () => {
         $("#countdown").css("color", "transparent");
         $("#countdown").css("background-color", "transparent");
         $("#loading").css("opacity", "0");

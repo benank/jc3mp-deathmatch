@@ -41,7 +41,7 @@
 
     let steamdata = [];
 
-    jcmp.AddEvent('deathmatch/cannonsound', () => 
+    jcmp.AddEvent('dm/cannonsound', () => 
     {
         var x = document.createElement("AUDIO");
         x.setAttribute("src","./music/death.ogg");
@@ -50,17 +50,17 @@
         
     })
 
-    jcmp.AddEvent('deathmatch/playerdied', (id) => {
+    jcmp.AddEvent('dm/playerdied', (id) => {
         // Make the X red and make their avatar grayscale
         $("#networkId_" + id).css("background-color", "red");
         $("#avatar_" + id).css("filter", "grayscale(100%)");
     })
 
-    jcmp.AddEvent('deathmatch/updatesteamavatars', (steam_urls) => {
+    jcmp.AddEvent('dm/updatesteamavatars', (steam_urls) => {
         steamdata = JSON.parse(steam_urls);
     })
 
-    jcmp.AddEvent('deathmatch/startcountdownsound', () => 
+    jcmp.AddEvent('dm/startcountdownsound', () => 
     {
         CreateAvatars(steamdata);
     });
@@ -90,7 +90,7 @@
         });
     }
 
-    jcmp.AddEvent('ResetCountdownCSS', () => {
+    jcmp.AddEvent('dm/ResetCountdownCSS', () => {
     })
     
     </script>
