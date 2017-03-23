@@ -53,7 +53,6 @@ class Deathmatch
 
             player.Respawn();
             jcmp.events.CallRemote('dm/SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
-            jcmp.events.Call('ChangeTime', this.defaults.time.minute, this.defaults.time.hour);
 
             // Hacky weapon "removal" until 0.9.9
             player.GiveWeapon(2307691279, 0, true);

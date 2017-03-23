@@ -89,7 +89,7 @@ const weathers =
 
 let ingame = false;
 
-jcmp.ui.AddEvent('SecondTick', () => {
+jcmp.ui.AddEvent('dm/SecondTick', () => {
 
     if (countdownTime > 0)
     {
@@ -172,7 +172,7 @@ jcmp.ui.AddEvent('chat_input_state', s => {
   can_spec = !s;
 });
 
-jcmp.ui.AddEvent('KeyPress', (key) => {
+jcmp.ui.AddEvent('dm/KeyPress', (key) => {
     if (key == "x".charCodeAt(0) && !ingame && !integrated_ui && can_spec) // No spectating for integrated yet
     {
         if (spectating)
@@ -413,6 +413,7 @@ jcmp.events.AddRemoteCallable('dm/InitializeDefaults', (data) => {
     defaults = JSON.parse(data);
     center = new Vector3f(defaults.centerPoint.x, defaults.centerPoint.y, defaults.centerPoint.z);
     diameter = new Vector2f(defaults.diameter, defaults.diameter);
+    jcmp.world.SetTime(defaults.time.hour, defaults.time.minute);
     if (weathers.indexOf(defaults.weather) > -1)
     {
         jcmp.world.weather = weathers.indexOf(defaults.weather);
@@ -456,7 +457,6 @@ jcmp.events.AddRemoteCallable('dm/InitializeDefaults', (data) => {
         jcmp.ui.CallEvent('dm/updatehealthspectating', false);
     }
 
-    //jcmp.world.SetTime(defaults.time.hour, defaults.time.minutes);
 })
 
 jcmp.events.AddRemoteCallable('dm/InitializeWeaponSpawns', (data) => {

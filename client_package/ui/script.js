@@ -45,7 +45,16 @@ $(document).ready(function() {
     $("#numonline").text("0");
     $("#numingame").text("0");
 
+    document.onkeypress = (e) => {
+        jcmp.CallEvent('dm/KeyPress', e.keyCode);
+    };
+
     
+    setInterval(function() 
+    {
+        jcmp.CallEvent('dm/SecondTick');
+    }, 1000);
+
     let ingame_time = 0;
 
     jcmp.AddEvent('dm/decreaseingametime', () => 
