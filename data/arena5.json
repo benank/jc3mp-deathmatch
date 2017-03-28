@@ -32,6 +32,7 @@
             "shotgun" : 
             [
                 {"hash": 1549148855, "name": "Automat U12",     "min_ammo": 30, "max_ammo": 80, "respawn_time": 1},
+                {"hash": 4091120604, "name": "U-96 Kladivo",     "min_ammo": 30, "max_ammo": 80, "respawn_time": 1},
                 {"hash": 2219364824, "name": "U-24 Zabijak",    "min_ammo": 30, "max_ammo": 80, "respawn_time": 1}
             ],
             "sniper" : 
