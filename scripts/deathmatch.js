@@ -17,6 +17,7 @@ class Deathmatch
         this.dead = []; // Keep track of dead people so spectators can know
         this.spectators = []; // Keep track of spectators so we can send them stuff
         this.winner_announced = false;
+        this.add_powerup_spawns();
     }
 
     start() // Initializes all game stuff but does not start game or countdown
@@ -54,15 +55,9 @@ class Deathmatch
             player.Respawn();
             jcmp.events.CallRemote('dm/SteamAvatarURLUpdate', player, JSON.stringify(dm.avatars));
 
-            // Hacky weapon "removal" until 0.9.9
-            player.GiveWeapon(2307691279, 0, true);
-            player.GiveWeapon(3923877588, 0, true);
-            player.GiveWeapon(2144721124, 0, true);
+            player.dm.weapons = player.weapons;
+            this.remove_weapons(player);
 
-            player.GiveWeapon(1394636892, 0, true);
-            player.GiveWeapon(2042423840, 0, true);
-            player.GiveWeapon(89410586, 0, true);
-            
         });
 
         if (!dm.config.integrated_mode)
@@ -73,7 +68,6 @@ class Deathmatch
 
     begin_game() // Actually begins the game after players have loaded
     {
-        //console.log("BEGIN GAME");
         this.players.forEach(player => 
         {
             player.invulnerable = false;
@@ -129,14 +123,36 @@ class Deathmatch
     pickup_weapon(player, index)
     {
         let weapon_spawn = this.weaponSpawnPoints[index];
+        let weapons = this.defaults.weapons[weapon_spawn.type];
+        let weapon = weapons[Math.floor(Math.random() * weapons.length)];
+
         if (weapon_spawn == null || weapon_spawn.disabled == true)
         {
             return;
         }
 
-        let weapons = this.defaults.weapons[weapon_spawn.type];
-        let weapon = weapons[Math.floor(Math.random() * weapons.length)];
-        player.GiveWeapon(weapon.hash, Math.ceil(Math.random() * (weapon.max_ammo - weapon.min_ammo) + weapon.min_ammo), true);
+        if (weapon_spawn.health == true)
+        {
+            player.health = player.health + 300;
+            weapon_spawn.health = false;
+        }
+        else if (weapon_spawn.radar == true)
+        {
+            const positions = [];
+            this.players.forEach((p) => {
+                if (p.networkId == player.networkId)
+                {
+                    positions.push({x: p.position.x, y: p.position.y, z: p.position.z});
+                }
+            })
+            jcmp.events.CallRemote('dm/RadarPositions', player, JSON.stringify(positions));
+            weapon_spawn.radar = false;
+        }
+        else
+        {
+            player.GiveWeapon(weapon.hash, Math.ceil(Math.random() * (weapon.max_ammo - weapon.min_ammo) + weapon.min_ammo), true);
+        }
+
         this.broadcast_weap_take(index);
         this.weaponSpawnPoints[index].disabled = true;
         const respawn_time = weapon.respawn_time * 1000 * 60;
@@ -194,6 +210,13 @@ class Deathmatch
             }
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
+
+            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
+            {
+                this.remove_weapons(player);
+                player.dm.weapons = null;
+            }
+
             this.remove_player(player, true);
             if (!this.winner_announced)
             {
@@ -211,13 +234,20 @@ class Deathmatch
         let timeout = setTimeout(() => 
         {
             jcmp.events.CallRemote('dm/EndGame', player);
-            player.invulnerable = true;
+            player.invulnerable = false;
             if (dm.config.integrated_mode)
             {
                 player.respawnPosition = player.dm.position;
             }
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
+
+            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
+            {
+                this.remove_weapons(player);
+                player.dm.weapons = null;
+            }
+
         }, 5000);
         this.timeouts.push(timeout);
 
@@ -243,13 +273,20 @@ class Deathmatch
         {
             jcmp.events.CallRemote('dm/EndGame', player);
             jcmp.events.CallRemote('dm/CleanupIngameUI', player);
-            player.invulnerable = true;
+            player.invulnerable = false;
             if (dm.config.integrated_mode)
             {
                 player.respawnPosition = player.dm.position;
             }
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
+
+            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
+            {
+                this.remove_weapons(player);
+                player.dm.weapons = null;
+            }
+
             this.remove_player(player, true);
         }, 5000);
         this.timeouts.push(timeout);
@@ -280,6 +317,34 @@ class Deathmatch
         {
             jcmp.events.CallRemote('dm/SyncPlayersIngame', null, this.players.length);
         }
+    }
+
+    remove_weapons(player)
+    {
+        if (typeof player.weapons != 'undefined')
+        {
+            player.weapons.forEach((weapon) =>
+            {
+                player.RemoveWeapon(weapon.modelHash);
+            });
+        }
+    }
+
+    // Make approx. 10% of spawns powerups
+    add_powerup_spawns()
+    {
+        this.weaponSpawnPoints.forEach((spawn) => 
+        {
+            const random = Math.random();
+            if (random <= 0.05)
+            {
+                spawn.health = true;
+            }
+            else if (random <= 0.1)
+            {
+                spawn.radar = true;
+            }
+        })
     }
 
     decrease_time()

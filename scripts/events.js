@@ -20,41 +20,46 @@ jcmp.events.Add('PlayerCreated', (player) =>
 
 jcmp.events.Add('PlayerReady', (player) => 
 {
-    if (!dm.config.integrated_mode)
+    setTimeout(function() 
     {
-        if (dm.config.chat_settings.welcome)
+            
+        if (!dm.config.integrated_mode)
         {
-            lang.send(player, lang.formatMessage(lang.msgs.on_welcome, {name: player.name}));
+            if (dm.config.chat_settings.welcome)
+            {
+                lang.send(player, lang.formatMessage(lang.msgs.on_welcome, {name: player.name}));
+            }
+            
+            if (dm.game.current_game != null)
+            {
+                jcmp.events.CallRemote('dm/SyncPlayersIngame', player, dm.game.current_game.players.length);
+                jcmp.events.CallRemote('dm/SyncIngameTime', player, dm.game.current_game.current_time, dm.game.current_game.showdown_mode);
+            }
+            
+            player.ready = true;
+            player.health = 800;
+            player.invulnerable = true;
+            player.dimension = 1;
+            player.position = new Vector3f(3891.033203125, 1557.2899169921875, 687.85791015625);
+            jcmp.events.CallRemote('dm/SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
+            if (dm.config.chat_settings.on_join_leave)
+            {
+                console.log(`${player.name} joined.`);
+                lang.broadcast(lang.formatMessage(lang.msgs.on_s_join, {name: player.name}));
+            }
+            jcmp.events.CallRemote('dm/ChangeArena', player, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
+            jcmp.events.CallRemote('dm/NonIntegratedUI', player);
+            gm.AddPlayerToLobby(player);
+        }
+
+        if (dm.config.testing_settings.override_utility && dm.config.testing_settings.enabled)
+        {
+            jcmp.events.CallRemote('dm/OverrideUtility', player);
         }
         
-        if (dm.game.current_game != null)
-        {
-            jcmp.events.CallRemote('dm/SyncPlayersIngame', player, dm.game.current_game.players.length);
-            jcmp.events.CallRemote('dm/SyncIngameTime', player, dm.game.current_game.current_time, dm.game.current_game.showdown_mode);
-        }
-        
-        player.ready = true;
-        player.health = 800;
-        player.invulnerable = true;
-        player.dimension = 1;
-        player.position = new Vector3f(3891.033203125, 1557.2899169921875, 687.85791015625);
-        jcmp.events.CallRemote('dm/SyncOnlinePlayers', null, jcmp.players.length, dm.config.game_settings.min_players);
-        if (dm.config.chat_settings.on_join_leave)
-        {
-            console.log(`${player.name} joined.`);
-            lang.broadcast(lang.formatMessage(lang.msgs.on_s_join, {name: player.name}));
-        }
-        jcmp.events.CallRemote('dm/ChangeArena', player, JSON.stringify(dm.game.current_arena.defaults.centerPoint));
-        jcmp.events.CallRemote('dm/NonIntegratedUI', player);
-        gm.AddPlayerToLobby(player);
-    }
+        steam.UpdateSteamImages(player);
 
-    if (dm.config.testing_settings.override_utility && dm.config.testing_settings.enabled)
-    {
-        jcmp.events.CallRemote('dm/OverrideUtility', player);
-    }
-    steam.UpdateSteamImages(player);
-
+    }, 3000);
 })
 
 jcmp.events.Add('PlayerDeath', (player, killer, reason) => 

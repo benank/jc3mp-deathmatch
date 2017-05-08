@@ -39,7 +39,5 @@ set `integrated_mode` to true.
 
 ### Todo
 
-- Organize clientside code.
 - Maybe add a small UI to display players in lobby for integrated mode.
 - Put admin command to end game.
-- Maybe more powerups, such as temporary invulnerability or radar.

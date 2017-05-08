@@ -96,4 +96,11 @@ $(document).ready(function() {
         x.play();
     })
 
+    jcmp.AddEvent('dm/RadarTimeoutStart', () => {
+        setTimeout(function() 
+        {
+            jcmp.CallEvent('dm/RadarTimeoutEnd');
+        }, 60 * 1000);
+    })
+
 });

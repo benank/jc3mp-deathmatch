@@ -2,14 +2,14 @@
 const lang = require('./lang');
 dm.lobby = [];
 
-setInterval(function() 
+setInterval(() => 
 {
     CheckGame();
 }, 1000);
 
 if (dm.config.integrated_mode)
 {
-    setInterval(function() 
+    setInterval(() => 
     {
         IntegratedBroadcast();
     }, dm.config.integrated_settings.chat.broadcast_interval * 1000);
@@ -18,12 +18,13 @@ if (dm.config.integrated_mode)
 let wait_time = (dm.config.testing_settings.enabled) ? dm.config.testing_settings.wait_time : dm.config.game_settings.wait_time;
 let min_players = (dm.config.testing_settings.enabled) ? dm.config.testing_settings.min_players : dm.config.game_settings.min_players;
 
-let timer;
+let timer = null;
 
 
 // Continuously checks if a game should start or end
 function CheckGame()
 {
+    //console.log(`current game: ${dm.game.current_game != null} lobby: ${dm.lobby.length}`);
     if (dm.game.current_game == null)
     {
         if (dm.lobby.length >= min_players && timer == null)
@@ -156,7 +157,7 @@ function AddPlayerToLobby(player)
 
 function RemovePlayerFromLobby(player)
 {
-    dm.lobby = dm.lobby.filter(p => typeof p != 'undefined');
+    dm.lobby = dm.lobby.filter(p => typeof p != 'undefined' || p != null);
     dm.lobby = dm.lobby.filter(p => p.networkId != player.networkId);
 }
 
