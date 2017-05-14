@@ -18,7 +18,9 @@ set `integrated_mode` to true.
  - A new game begins only when the current one ends.
  - Each weapon spawn contains a random weapon of that type (ex. pistol spawns contain random types of pistols).
  - All arenas restrict use of wingsuit and most restrict use of parachute. This is to keep gameplay fun by limiting mobility. These settings can be adjusted in individual arena settings.
-
+ - Health regeneration is disabled. You must find a health boost powerup to regain health.
+ - Radar powerups are randomly placed and will reveal all players in the game for one minute.
+ 
 ### Additional Notes
 
 - Supported weathers for arenas: base, rain, overcast, thunderstorm, fog, snow, and random.
