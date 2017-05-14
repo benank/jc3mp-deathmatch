@@ -6,23 +6,12 @@ const lang = require('./lang');
 
 // Default JC3MP Events -----
 
-jcmp.events.Add('PlayerCreated', (player) => 
-{
-    // Handle player spawning if standalone
-    if (!dm.config.integrated_mode)
-    {
-        player.position = new Vector3f(3891.033203125, 1557.2899169921875, 687.85791015625);
-        player.invulnerable = true;
-        player.dimension = 1;
-    }
-    player.dm = [];
-})
-
 jcmp.events.Add('PlayerReady', (player) => 
 {
     setTimeout(function() 
     {
-            
+        if (typeof player.name == 'undefined' || player.name == undefined) {return;}
+
         if (!dm.config.integrated_mode)
         {
             if (dm.config.chat_settings.welcome)
@@ -36,6 +25,7 @@ jcmp.events.Add('PlayerReady', (player) =>
                 jcmp.events.CallRemote('dm/SyncIngameTime', player, dm.game.current_game.current_time, dm.game.current_game.showdown_mode);
             }
             
+            player.dm = [];
             player.ready = true;
             player.health = 800;
             player.invulnerable = true;

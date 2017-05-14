@@ -36,7 +36,7 @@ class Deathmatch
             player.dm.position = player.position;
             jcmp.events.CallRemote('dm/InitializeDefaults', player, JSON.stringify(this.defaults));
             jcmp.events.CallRemote('dm/InitializeWeaponSpawns', player, JSON.stringify(this.weaponSpawnPoints));
-            let spawn_index = Math.round(Math.random() * (available_spawns.length - 1))
+            let spawn_index = Math.round(Math.random() * (available_spawns.length - 1));
             let data;
             if (available_spawns.length == 0) // If we have run out of unique spawns, take random ones
             {
@@ -50,6 +50,7 @@ class Deathmatch
             let pos = new Vector3f(data.x + this.get_random_adjust(3), data.y + 2, data.z + this.get_random_adjust(3));
             player.health = 800;
             player.respawnPosition = pos;
+            player.position = pos;
             player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
 
             player.Respawn();
@@ -140,7 +141,7 @@ class Deathmatch
         {
             const positions = [];
             this.players.forEach((p) => {
-                if (p.networkId == player.networkId)
+                if (p.networkId != player.networkId)
                 {
                     positions.push({x: p.position.x, y: p.position.y, z: p.position.z});
                 }

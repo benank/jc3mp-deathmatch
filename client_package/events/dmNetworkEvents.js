@@ -96,6 +96,15 @@ jcmp.events.AddRemoteCallable('dm/ShowDeathScreen', (num, tied) => {
     jcmp.ui.CallEvent('dm/CleanupIngameUI');
     jcmp.localPlayer.healthEffects.regenRate = 120;
     jcmp.localPlayer.healthEffects.regenCooldown = 5;
+
+    if (pois.length > 0)
+    {
+        pois.forEach((poi) => {
+            poi.Destroy();
+        })
+    }
+    pois = [];
+
 })
 
 jcmp.events.AddRemoteCallable('dm/CleanupIngameUI', () => {
@@ -202,6 +211,7 @@ jcmp.events.AddRemoteCallable('dm/InitializeWeaponSpawns', (data) => {
 jcmp.events.AddRemoteCallable('dm/WeaponTake', (index) => {
     weaponSpawns[index].disabled = true;
     weaponSpawns[index].health = false;
+    weaponSpawns[index].radar = false;
 })
 
 jcmp.events.AddRemoteCallable('dm/WeaponRespawn', (index) => {
