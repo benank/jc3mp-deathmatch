@@ -19,15 +19,15 @@ let wait_time = (dm.config.testing_settings.enabled) ? dm.config.testing_setting
 let min_players = (dm.config.testing_settings.enabled) ? dm.config.testing_settings.min_players : dm.config.game_settings.min_players;
 
 let timer = null;
+let timer2 = null;
 
 
 // Continuously checks if a game should start or end
 function CheckGame()
 {
-    //console.log(`current game: ${dm.game.current_game != null} lobby: ${dm.lobby.length}`);
     if (dm.game.current_game == null)
     {
-        if (dm.lobby.length >= min_players && timer == null)
+        if (dm.lobby.length >= min_players && timer == null && timer2 == null)
         {
             lang.broadcast(lang.formatMessage(lang.msgs.on_start_soon, {time: wait_time}));
             timer = setTimeout(function() 
@@ -39,7 +39,7 @@ function CheckGame()
                         jcmp.events.CallRemote('dm/FadeInCountdown', player);
                     });
                     
-                    timer = setTimeout(function() 
+                    timer2 = setTimeout(function() 
                     {
                         if (dm.lobby.length >= min_players)
                         {
@@ -64,10 +64,11 @@ function CheckGame()
                         {
                             dm.lobby = []; // Reset lobby only if integrated mode is on
                         }
-                        clearTimeout(timer);
-                        timer = null;
+                        clearTimeout(timer2);
+                        timer2 = null;
                     }, wait_time * 0.3 * 1000);
                 }
+                timer = null;
             }, wait_time * 0.7 * 1000);
         }
     }

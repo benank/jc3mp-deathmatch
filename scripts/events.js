@@ -3,6 +3,15 @@ const gm = require('./gameManager');
 const steam = require('./steam');
 const lang = require('./lang');
 
+/*
+health avatar not correct for spectators
+space does not return to the first player in the arena
+weapon icons do not show up for spectators
+
+
+
+*/
+
 
 // Default JC3MP Events -----
 
@@ -159,11 +168,9 @@ jcmp.events.AddRemoteCallable('dm/GameTeleportCompleted', (player) => {
 jcmp.events.AddRemoteCallable('dm/BeginSpectate', (player) => {
     if (dm.game.current_game == null || !dm.game.current_game.active)
     {
-        console.log("PLAYER SPECTATE FAILED");
         lang.send(player, lang.formatMessage(lang.msgs.on_spectate_fail, {}));
         return;
     }
-    console.log("BEGIN PLAYER SPECTATE");
 
     jcmp.events.CallRemote('dm/BeginSpectate', player, JSON.stringify(dm.game.current_game.defaults), JSON.stringify(dm.game.current_game.weaponSpawnPoints));
     dm.game.current_game.spectators.push(player);
@@ -179,7 +186,6 @@ jcmp.events.AddRemoteCallable('dm/BeginSpectate', (player) => {
 })
 
 jcmp.events.AddRemoteCallable('dm/EndSpectate', (player) => {
-    console.log("END SPECTATE");
     player.position = player.dms.position;
     player.dimension = player.dms.dimension;
     if (dm.game.current_game != null)

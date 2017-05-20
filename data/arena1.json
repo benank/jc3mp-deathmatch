@@ -52,10 +52,9 @@
                 {"hash": 3070823687, "name": "Capstone Hydra",  "min_ammo": 3, "max_ammo": 10, "respawn_time": 2},
                 {"hash": 2042423840, "name": "CS Negotiator",   "min_ammo": 5, "max_ammo": 15, "respawn_time": 2},
                 {"hash": 68160093,   "name": "Fire Leech",      "min_ammo": 4, "max_ammo": 14, "respawn_time": 2},
-                {"hash": 1440484885, "name": "Urga Stupka-210", "min_ammo": 10, "max_ammo": 20, "respawn_time": 2},
                 {"hash": 3913913650, "name": "UVK-13",          "min_ammo": 4, "max_ammo": 13, "respawn_time": 2},
-                {"hash": 1064776106, "name": "M488",            "min_ammo": 3, "max_ammo": 6, "respawn_time": 3},
-                {"hash": 3191136252, "name": "GuitaRPG",        "min_ammo": 10, "max_ammo": 17, "respawn_time": 2}
+                {"hash": 1064776106, "name": "M488",            "min_ammo": 1, "max_ammo": 2, "respawn_time": 3},
+                {"hash": 3759082339, "name": "UPU-210",         "min_ammo": 3, "max_ammo": 6, "respawn_time": 2}
             ],
             "grenade" : 
             [
