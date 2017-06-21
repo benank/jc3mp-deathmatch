@@ -3,13 +3,14 @@
 function GetArenaData()
 {
     let arenas = [];
+    let basePath = __dirname + '/../data/';
     //dm.fss.readdir(__dirname + '../data/', function(err, filenames) {
-    dm.fss.readdir('./packages/deathmatch/data/', function(err, filenames) 
+    dm.fss.readdir(basePath, function(err, filenames)
     {
         if (err) throw err;
         filenames.forEach(function(filename) 
         {
-            dm.fss.readFile('./packages/deathmatch/data/' + filename, 'utf8', function (err, data) 
+            dm.fss.readFile(basePath + filename, 'utf8', function (err, data)
             {
                 if (err) throw err;
                 let obj = JSON.parse(data);
