@@ -158,7 +158,7 @@ function AddPlayerToLobby(player)
 
 function RemovePlayerFromLobby(player)
 {
-    dm.lobby = dm.lobby.filter(p => typeof p != 'undefined' || p != null);
+    dm.lobby = dm.lobby.filter(p => p != undefined || p != null || p.name != null);
     dm.lobby = dm.lobby.filter(p => p.networkId != player.networkId);
 }
 

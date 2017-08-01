@@ -285,6 +285,8 @@ jcmp.events.AddRemoteCallable('dm/RadarPositions', (data) => {
     data.forEach((entry) => {
         const pos = new Vector3f(entry.x, entry.y, entry.z);
         const poi = new POI(15, pos, ' ');
+        poi.minDistance = 0;
+        poi.maxDistance = 999999;
         poi.clampedToScreen = true;
         pois.push(poi);
     })

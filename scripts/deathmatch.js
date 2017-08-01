@@ -75,6 +75,7 @@ class Deathmatch
             // Set the player's dimension again because it might fix a rare bug where players dont see each other
             player.dimension = (dm.config.integrated_mode) ? dm.config.integrated_settings.dimension : 0;
             jcmp.events.CallRemote('dm/CountDownStart', player, 10);
+            this.remove_weapons(player);
             let timeout = setTimeout(() =>
             {
                 player.position = player.respawnPosition; // Teleport them to their position again to make sure they dont freeze
@@ -212,11 +213,7 @@ class Deathmatch
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
 
-            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
-            {
-                this.remove_weapons(player);
-                player.dm.weapons = null;
-            }
+            this.remove_weapons(player);
 
             this.remove_player(player, true);
             if (!this.winner_announced)
@@ -243,11 +240,7 @@ class Deathmatch
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
 
-            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
-            {
-                this.remove_weapons(player);
-                player.dm.weapons = null;
-            }
+            this.remove_weapons(player);
 
         }, 5000);
         this.timeouts.push(timeout);
@@ -282,11 +275,7 @@ class Deathmatch
             player.Respawn();
             player.dimension = (dm.config.integrated_mode) ? player.dm.dimension : 1;
 
-            if (typeof player.dm.weapons != 'undefined' && player.dm.weapons != null)
-            {
-                this.remove_weapons(player);
-                player.dm.weapons = null;
-            }
+            this.remove_weapons(player);
 
             this.remove_player(player, true);
         }, 5000);
@@ -322,7 +311,7 @@ class Deathmatch
 
     remove_weapons(player)
     {
-        if (typeof player.weapons != 'undefined')
+        if (player.weapons != undefined)
         {
             player.weapons.forEach((weapon) =>
             {
@@ -378,8 +367,8 @@ class Deathmatch
 
     check_for_nulls() // Makes sure that arrays of players don't bug out and contain bad things
     {
-        this.players = this.players.filter(p => typeof p != 'undefined');
-        this.spectators = this.spectators.filter(p => typeof p != 'undefined');
+        this.players = this.players.filter(p => p != undefined || p != null || p.name != undefined);
+        this.spectators = this.spectators.filter(p => p != undefined || p != null || p.name != undefined);
     }
 
 
