@@ -29,10 +29,7 @@ set `integrated_mode` to true.
 
 ### Known Issues
 
-- Spectator: Health avatar is same as LocalPlayer
-- Spectator: Pressing space does not switch spectated player.
-- Spectator: Death sound is super loud.
-- Spectator: Does not work at all if player was not in the game previously. Will be fixed in JC3MP 0.9.9.
+- Spectator: Health avatar does not work properly.
 - Sometimes weapon spawns do not appear.
 
  
